@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style>
+
+    body {
+        font: 11px sans-serif;
+    }
+
+    .axis line,
+    .axis text {
+        font: 11px sans-serif;
+    }
+    .axis path {
+        fill: none;
+        stroke: #000;
+        shape-rendering: crispEdges;
+    }
+</style>
+
+
+<body>
+<link href="style.css" rel="stylesheet">
+<script src="https://d3js.org/d3.v4.min.js"></script>
+<link rel="stylesheet" href="http://code.jquery.com/ui/1.11.1/themes/smoothness/jquery-ui.css">
+<script src="http://code.jquery.com/jquery-1.10.2.js"></script>
+<script src="http://code.jquery.com/ui/1.11.1/jquery-ui.js"></script>
+
+<div id="layout">
+    <div id="title">
+        <p>School Districts Scatterplot</p>
+    </div>
+    <div id="visualization">
+        <svg class="chart"></svg>
+        <script src="scatter.js"></script>
+    </div>
+    <div id="controls">
+        <!--label for the school district checkboxes-->
+        <label>School Districts:</label>
+        <input type="text" id="mytype" readonly style="border:0; color:#f6931f; font-weight:bold;">
+        <br>
+
+        <!--the school district check boxes-->
+        <label><input id="all" type='checkbox' value="all" checked>All</label><br>
+        <label><input id="seattle" type='checkbox' value="seattle">Seattle</label><br/>
+        <label><input id="highline" type='checkbox' value="highline">Highline</label><br/>
+        <label><input id="tukwila" type='checkbox' value="tukwila">Tukwila</label><br/>
+        <label><input id="renton" type='checkbox' value="renton">Renton</label><br/>
+        <label><input id="kent" type='checkbox' value="kent">Kent</label><br/>
+        <label><input id="federalway" type='checkbox' value="federalway">Federal Way</label><br/>
+        <label><input id="auburn" type='checkbox' value="auburn">Auburn</label>
+    </div>
+</div>
+</body>
+</html>
+
