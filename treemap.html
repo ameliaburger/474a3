@@ -7,6 +7,14 @@
         position: relative;
     }
 
+    form {
+        font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    }
+
+    svg {
+        font: 10px sans-serif;
+    }
+
     .node {
         box-sizing: border-box;
         line-height: 1em;
@@ -31,18 +39,21 @@
 </style>
 
 <body>
-<link href="style.css" rel="stylesheet">
 <script src="//d3js.org/d3.v4.0.0-alpha.49.min.js"></script>
 
 <script>
     var root;
 
     var width = 960;
-    var height = 1060;
+    var height = 570;
 
     var treemap = d3.treemap()
+            .tile(d3.treemapSquarify)
             .size([width, height])
-            .padding(1);
+            .padding(1)
+            .round(true);
+
+    var color = d3.scaleOrdinal(d3.schemeCategory10);
 
     d3.csv("treemap2.csv", function(error, schools) {
         //read in the data
@@ -67,11 +78,10 @@
 
         root
             .sum(function(d) { return d.GradRate; })
-            .sort(function(a, b) { return b.GradRate - a.GradRate; });
+            .sort(function(a, b) { return b.GradRate - a.GradRate; })
+        ;
 
         treemap(root);
-
-        console.log(root);
 
         var node = d3.select("body")
                 .selectAll(".node")
@@ -81,11 +91,12 @@
                 .style("left", function(d) { return d.x0 + "px"; })
                 .style("top", function(d) { return d.y0 + "px"; })
                 .style("width", function(d) { return d.x1 - d.x0 + "px"; })
-                .style("height", function(d) { return d.y1 - d.y0 + "px"; });
+                .style("height", function(d) { return d.y1 - d.y0 + "px"; })
+                .style("background", function(d) { return color(d.parent.id); });
 
         node.append("div")
                 .attr("class", "node-label")
-                .text(function(d) { return d.id + ": " + d.data.GradRate.toFixed(2) + "%"});
+                .text(function(d) { return d.id + "\nGraduation Rate: " + d.data.GradRate.toFixed(2) + "%"});
 
         node.append("div")
                 .attr("class", "node-value")
