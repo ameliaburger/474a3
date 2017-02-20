@@ -2,7 +2,16 @@ var width = 750;
 var height = 450;
 var margin = {top: 20, right: 15, bottom: 30, left: 40};
 var w = width - margin.left - margin.right;
-var h = height - margin.top - margin.bottom;
+var h = height - margin.top - margin.bottom; // set the height, width, and margins for the visualization space
+
+// the default set up when the visualization is first loaded, the "all" box should be checked
+// and all the other boxes should be unchecked
+var districts = [["All", true], ["Seattle", false], ["Highline", false],  ["Tukwila", false],
+    ["Renton", false], ["Kent", false], ["Federal Way", false], ["Auburn", false]];
+var currDistricts = districts; // keep track of the current districts that are selected and that should be displayed
+
+var attributes = ["AfricanAmerican", "Latino"];
+var ranges = [[0, 100], [0, 100]];
 
 var dataset; //the full dataset
 
@@ -10,23 +19,22 @@ d3.csv("SchoolData.csv", function(error, schools) {
     //read in the data
     if (error) return console.warn(error);
     schools.forEach(function(d) {
-        d.AcademicYear = d.AcademicYear;
-        d.District = d.District;
-        d.School = d.School;
-        d.FRPL = +d.FRPL;
-        d.ELL = +d.ELL;
-        d.Total = +d.Total;
-        d.Graduating = +d.Graduating;
-        d.GradRate = (d.Graduating/ d.Total) * 100;
+        d.FRPL = +d.FRPL * 100;
+        d.AfricanAmerican = d.AfricanAmerican * 100;
+        d.Latino = d.Latino * 100;
+        d.ELL = +d.ELL * 100;
+        d.RigorousCourses = d.RigorousCourses * 100;
+        d.GradRate = d.GradRate * 100;
+        d.FRPLGradRate = d.FRPLGradRate * 100;
     });
     //dataset is the full dataset -- maintain a copy of this at all times
     dataset = schools;
 
     //all the data is now loaded, so draw the initial vis
-    drawVis(dataset.filter(function(d) { return d['School'] == 'All' }));
+    drawVis(dataset);
 });
 
-//none of these depend on the data being loaded so fine to define here
+// Define variables
 var chart = d3.select(".chart")
     .attr("width", w + margin.left + margin.right)
     .attr("height", h + margin.top + margin.bottom+15)
@@ -40,9 +48,9 @@ var tooltip = d3.select("body").append("div")
 // color scale for school districts
 var col = d3.scaleOrdinal(d3.schemeCategory10);
 
-var x = d3.scaleOrdinal()
-    .domain(["2010", "2011", "2012", "2013", "2014"])
-    .range([0, w/4, 2*w/4, 3*w/4, w]);
+var x = d3.scaleLinear()
+    .domain([0, 100])
+    .range([0, w]);
 
 var xAxis = d3.axisBottom()
     .scale(x);
@@ -56,10 +64,10 @@ chart.append("g")
     .attr("x", w)
     .attr("y", -6)
     .style("text-anchor", "end")
-    .text("Year");
+    .text("Percent Students on Free/Reduced Price Lunch (Low Income)");
 
 var y = d3.scaleLinear()
-    .domain([55, 95])
+    .domain([0, 100])
     .range([h, 0]);
 
 var yAxis = d3.axisLeft()
@@ -73,12 +81,9 @@ chart.append("g")
     .attr("y", 6)
     .attr("dy", ".71em")
     .style("text-anchor", "end")
-    .text("Graduation Rate");
+    .text("Graduation Rate (All Students)");
 
-// Define the lines
-var valueline = d3.line()
-    .x(function(d) { return x(getX(parseInt(d.AcademicYear))); })
-    .y(function(d) { return y(d.GradRate); });
+
 
 
 function drawVis(data) { //draw the circiles initially and on each interaction with a control
@@ -87,14 +92,14 @@ function drawVis(data) { //draw the circiles initially and on each interaction w
         .data(data);
 
     circle
-        .attr("cx", function(d) { return x(d.AcademicYear);  })
+        .attr("cx", function(d) { return x(d.FRPL);  })
         .attr("cy", function(d) { return y(d.GradRate);  })
         .style("fill", function(d) { return col(d.District); });
 
     circle.exit().remove();
 
     circle.enter().append("circle")
-        .attr("cx", function(d) { return x(d.AcademicYear);  })
+        .attr("cx", function(d) { return x(d.FRPL);  })
         .attr("cy", function(d) { return y(d.GradRate);  })
         .attr("r", 4)
         .style("fill", function(d) { return col(d.District); })
@@ -102,8 +107,9 @@ function drawVis(data) { //draw the circiles initially and on each interaction w
         .on("mouseover", function(d) {
             tooltip.transition()
                 .duration(200)
-                .style("opacity", 1.0);
-            tooltip.html(d.District + ": " + d.GradRate.toFixed(2) + "%, " + d.AcademicYear)
+                .style("opacity", 0.8);
+            tooltip.html("District: " + d.District + "<br/>School: " + d.School + "<br/>Graduation Rate: " +
+                d.FRPLGradRate + "%<br/>Percent FRPL: " + d.FRPL + "%")
                 .style("left", (d3.event.pageX + 5) + "px")
                 .style("top", (d3.event.pageY - 28) + "px");
         })
@@ -112,72 +118,58 @@ function drawVis(data) { //draw the circiles initially and on each interaction w
                 .duration(500)
                 .style("opacity", 0);
         });
-
-    chart.append("path")
-        .data(data.filter(function(d) { return d['District'] == 'Auburn School District' }))
-        .attr("class", "line")
-        .attr("d", valueline);
 }
 
-function getX(num) {
-    console.log(num);
-    if (num == 2010) {
-        return 0;
-    } else if (num == 2011) {
-        return w/4;
-    } else if (num == 2012) {
-        return 2*w/4;
-    } else if (num == 2013) {
-        return 3*w/4;
-    } else {
-        return w;
-    }
-}
 
-/*
-function filterType(mytype) {
-    // check "all"
-    if(mytype == "all"){
-        // reset currTypes
-        currTypes[0][1] = true;
-        for (i = 1; i < currTypes.length; i++) {
-            currTypes[i][1] = false;
+
+// filter by school district - is triggered when the checkboxes are checked or unchecked
+function filterType(mydistrict) {
+    // checked "all"
+    if(mydistrict == "All"){
+        // reset currDistricts to default
+        currDistricts[0][1] = true;
+        for (i = 1; i < currDistricts.length; i++) {
+            currDistricts[i][1] = false;
         }
-        console.log(currTypes);
 
         // uncheck the other boxes
-        document.getElementById("tech").checked = false;
-        document.getElementById("transp").checked = false;
-        document.getElementById("retail").checked = false;
-        document.getElementById("fastfood").checked = false;
-        document.getElementById("pharm").checked = false;
+        document.getElementById("Seattle").checked = false;
+        document.getElementById("Highline").checked = false;
+        document.getElementById("Tukwila").checked = false;
+        document.getElementById("Renton").checked = false;
+        document.getElementById("Kent").checked = false;
+        document.getElementById("Federal Way").checked = false;
+        document.getElementById("Auburn").checked = false;
 
+        // filter based on current slider selections
         var toVisualize = dataset.filter(function(d) { return isInRange(d)});
+
         drawVis(toVisualize);
 
     } else {
         // any box besides "all" checked
 
-        // check and uncheck appropriate boxes
-        document.getElementById("all").checked = false;
+        // uncheck the "all" box
+        document.getElementById("All").checked = false;
 
-        // update currTypes
-        currTypes[0][1] = false;
-        for (i = 1; i < currTypes.length; i++) {
-            if (currTypes[i][0] == mytype) {
-                if (currTypes[i][1]) {
-                    currTypes[i][1] = false;
-                    document.getElementById(mytype).checked = false;
+        // update currDistricts to reflect current checkbox selections
+        currDistricts[0][1] = false;
+        for (i = 1; i < currDistricts.length; i++) {
+            if (currDistricts[i][0] == mydistrict) {
+                if (currDistricts[i][1]) { // check whether the box was just checked or unchecked
+                                            // and update currDistricts accordingly
+                    currDistricts[i][1] = false;
+                    document.getElementById(mydistrict).checked = false;
 
                 } else {
-                    currTypes[i][1] = true;
-                    document.getElementById(mytype).checked = true;
+                    currDistricts[i][1] = true;
+                    document.getElementById(mydistrict).checked = true;
                 }
             }
         }
 
-        // filter based on currTypes
-        var ndata = filterOnCurrTypes(dataset);
+        // filter based on currDistricts
+        var ndata = filterOnCurrDistricts(dataset);
 
         // filter to account for sliders and drawVis
         ndata = ndata.filter(function(d) { return isInRange(d)});
@@ -185,48 +177,64 @@ function filterType(mytype) {
     }
 }
 
-// handle price slider
+// return the filtered dataset that should be used to create the visualization
+function filterOnCurrDistricts(data) {
+    var newData = [];
+
+    for (i = 0; i < currDistricts.length; i++) {
+        if (currDistricts[i][1]) {
+            newData = newData.concat(data.filter(function(d) {
+                return d['District'].includes(currDistricts[i][0]);
+            }));
+        }
+    }
+    return newData;
+}
+
+
+// handle percent black/african american slider
 $(function() {
-    $("#price").slider({
+    $("#AfricanAmerican").slider({
         range: true,
         min: 0,
-        max: maxPrice,
-        values: [ 0, maxPrice ],
+        max: 60,
+        values: [ 0, 60 ],
 
         slide: function(event, ui ) {
-            $("#priceamount").val(ui.values[0] + " - " + ui.values[1]); filterVolume("price", ui.values);
+            $("#aframpercent").val(ui.values[0] + " - " + ui.values[1]); filterOnSliders("AfricanAmerican", ui.values);
         } //end slide function
     }); //end slider
 
-    $("#priceamount").val($("#price").slider("values", 0) + " - " + $("#price").slider("values", 1));
+    $("#aframpercent").val($("#AfricanAmerican").slider("values", 0) + " - " + $("#AfricanAmerican").slider("values", 1));
 }); //end function
 
 
-// handle volume slider
+// handle latino percent slider
 $(function() {
-    $("#volume").slider({
+    $("#Latino").slider({
         range: true,
         min: 0,
-        max: maxVolume,
-        values: [ 0, maxVolume ],
+        max: 60,
+        values: [ 0, 60 ],
 
         slide: function(event, ui ) {
-            $("#volumeamount").val(ui.values[0] + " - " + ui.values[1]); filterVolume("vol", ui.values);
+            $("#latinopercent").val(ui.values[0] + " - " + ui.values[1]); filterOnSliders("Latino", ui.values);
         } //end slide function
     }); //end slider
 
-    $("#volumeamount").val($("#volume").slider("values", 0) + " - " + $("#volume").slider("values", 1));
+    $("#latinopercent").val($("#Latino").slider("values", 0) + " - " + $("#Latino").slider("values", 1));
 }); //end function
 
-function filterVolume(attr, values) {
+function filterOnSliders(attr, values) {
     for (i = 0; i < attributes.length; i++){
         if (attr == attributes[i]){
             ranges[i] = values;
         }
     }
+
     var toVisualize = dataset.filter(function(d) { return isInRange(d)});
-    if (!currTypes[0][1]) {
-        toVisualize = filterOnCurrTypes(toVisualize);
+    if (!currDistricts[0][1]) {
+        toVisualize = filterOnCurrDistricts(toVisualize);
     }
     drawVis(toVisualize);
 }
@@ -239,4 +247,3 @@ function isInRange(datum) {
     }
     return true;
 }
-*/

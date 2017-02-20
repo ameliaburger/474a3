@@ -27,7 +27,7 @@
 
 <div id="layout">
     <div id="title">
-        <p>School Districts Scatterplot</p>
+        <p>Percentage of Students that are Low Income vs. Graduation Rate</p>
     </div>
     <div id="visualization">
         <svg class="chart"></svg>
@@ -35,19 +35,41 @@
     </div>
     <div id="controls">
         <!--label for the school district checkboxes-->
-        <label>School Districts:</label>
+        <br/>
+        <label class="label">School Districts:</label>
         <input type="text" id="mytype" readonly style="border:0; color:#f6931f; font-weight:bold;">
         <br>
 
         <!--the school district check boxes-->
-        <label><input id="all" type='checkbox' value="all" checked>All</label><br>
-        <label><input id="seattle" type='checkbox' value="seattle">Seattle</label><br/>
-        <label><input id="highline" type='checkbox' value="highline">Highline</label><br/>
-        <label><input id="tukwila" type='checkbox' value="tukwila">Tukwila</label><br/>
-        <label><input id="renton" type='checkbox' value="renton">Renton</label><br/>
-        <label><input id="kent" type='checkbox' value="kent">Kent</label><br/>
-        <label><input id="federalway" type='checkbox' value="federalway">Federal Way</label><br/>
-        <label><input id="auburn" type='checkbox' value="auburn">Auburn</label>
+        <label><input id="All" type='checkbox' value="All" checked onchange='filterType(this.value)'>All</label><br>
+        <label><input id="Seattle" type='checkbox' value="Seattle"
+                      onchange='filterType(this.value)'>Seattle Public Schools</label><br/>
+        <label><input id="Highline" type='checkbox' value="Highline"
+                      onchange='filterType(this.value)'>Highline Public Schools</label><br/>
+        <label><input id="Tukwila" type='checkbox' value="Tukwila"
+                      onchange='filterType(this.value)'>Tukwila School District</label><br/>
+        <label><input id="Renton" type='checkbox' value="Renton"
+                      onchange='filterType(this.value)'>Renton School District</label><br/>
+        <label><input id="Kent" type='checkbox' value="Kent"
+                      onchange='filterType(this.value)'>Kent School District</label><br/>
+        <label><input id="Federal Way" type='checkbox' value="Federal Way"
+                      onchange='filterType(this.value)'>Federal Way Public Schools</label><br/>
+        <label><input id="Auburn" type='checkbox' value="Auburn"
+                      onchange='filterType(this.value)'>Auburn School District</label><br/>
+
+        <!--sliders-->
+        <br/>
+        <label class="label">Percent Black/African American</label>
+        <div id="AfricanAmerican" class="slider-range"></div>
+        <label class="sliderlabel" for="aframpercent">Percent range:</label>
+        <input type="text" id="aframpercent" readonly style="border:0; color:#f6931f; font-weight:bold;">
+
+        <br/>
+        <br/>
+        <label class="label">Percent Hispanic/Latino</label>
+        <div id="Latino" class="slider-range"></div>
+        <label class="sliderlabel" for="latinopercent">Percent range:</label>
+        <input type="text" id="latinopercent" readonly style="border:0; color:#f6931f; font-weight:bold;">
     </div>
 </div>
 </body>
