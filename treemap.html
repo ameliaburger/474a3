@@ -2,60 +2,49 @@
 <meta charset="utf-8">
 
 <style>
-    body {
-        font: 10px sans-serif;
-        position: relative;
-    }
-
-    form {
-        font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-    }
-
-    svg {
+    text {
         font: 10px sans-serif;
     }
 
-    .node {
-        box-sizing: border-box;
-        line-height: 1em;
-        overflow: hidden;
-        position: absolute;
-        white-space: pre;
-        background: #ddd;
+    tspan:last-child {
+        font-size: 9px;
+        fill-opacity: 0.8;
     }
 
-    .node-label,
-    .node-value {
-        margin: 4px;
+    .node rect {
+        shape-rendering: crispEdges;
     }
 
-    .node-value {
-        margin-top: -2px;
-    }
-
-    .node-value {
-        font-weight: bold;
+    .node--hover rect {
+        stroke: #000;
     }
 </style>
 
 <body>
+<svg width="960" height="1060"></svg>
 <script src="//d3js.org/d3.v4.0.0-alpha.49.min.js"></script>
 
 <script>
     var root;
 
-    var width = 960;
-    var height = 570;
+    var svg = d3.select("svg"),
+            width = +svg.attr("width"),
+            height = +svg.attr("height");
+
+    var format = d3.format(",d");
 
     var treemap = d3.treemap()
-            .tile(d3.treemapSquarify)
             .size([width, height])
-            .padding(1)
+            .paddingOuter(3)
+            .paddingTop(19)
+            .paddingInner(1)
             .round(true);
 
-    var color = d3.scaleOrdinal(d3.schemeCategory10);
+    var color = d3.scaleLinear()
+            .domain([0, 2])
+            .range(["steelblue", "white"]);
 
-    d3.csv("treemap2.csv", function(error, schools) {
+    d3.csv("treemap.csv", function(error, schools) {
         //read in the data
         if (error) return console.warn(error);
         schools.forEach(function(d) {
@@ -76,32 +65,72 @@
 
         root = stratify(dataset);
 
+        console.log(root);
+
         root
             .sum(function(d) { return d.GradRate; })
-            .sort(function(a, b) { return b.GradRate - a.GradRate; })
+            .sort(function(a, b) { return b.height - a.height || b.GradRate - a.GradRate; })
         ;
 
         treemap(root);
 
-        var node = d3.select("body")
+        var cell = svg
                 .selectAll(".node")
-                .data(root.leaves())
-                .enter().append("div")
+                .data(root.descendants())
+                .enter().append("g")
+                .attr("transform", function(d) { return "translate(" + d.x0 + "," + d.y0 + ")"; })
                 .attr("class", "node")
-                .style("left", function(d) { return d.x0 + "px"; })
-                .style("top", function(d) { return d.y0 + "px"; })
-                .style("width", function(d) { return d.x1 - d.x0 + "px"; })
-                .style("height", function(d) { return d.y1 - d.y0 + "px"; })
-                .style("background", function(d) { return color(d.parent.id); });
+                .each(function(d) { d.node = this; })
+                .on("mouseover", hovered(true))
+                .on("mouseout", hovered(false));
 
-        node.append("div")
-                .attr("class", "node-label")
-                .text(function(d) { return d.id + "\nGraduation Rate: " + d.data.GradRate.toFixed(2) + "%"});
+        cell.append("rect")
+                .attr("id", function(d) { return "rect-" + d.id; })
+                .attr("width", function(d) { return d.x1 - d.x0; })
+                .attr("height", function(d) { return d.y1 - d.y0; })
+                .style("fill", function(d) { return color(d.depth); });
 
-        node.append("div")
-                .attr("class", "node-value")
-                .text(function(d) { return d.GradRate; });
+        cell.append("clipPath")
+                .attr("id", function(d) { return "clip-" + d.id; })
+                .append("use")
+                .attr("xlink:href", function(d) { return "#rect-" + d.id + ""; });
+
+        var label = cell.append("text")
+                .attr("clip-path", function(d) { return "url(#clip-" + d.id + ")"; });
+
+        label
+                .filter(function(d) { return d.children; })
+                .selectAll("tspan")
+                .data(function(d) { return d.id.substring(d.id.lastIndexOf(".") + 1)
+                        .split(/(?=[A-Z][^A-Z])/g).concat("\xa0" + format(d.data.GradRate) + "%"); })
+                .enter().append("tspan")
+                .attr("x", function(d, i) { return i ? null : 4; })
+                .attr("y", 13)
+                .text(function(d) { return d; });
+
+        label
+                .filter(function(d) { return !d.children; })
+                .selectAll("tspan")
+                .data(function(d) { return d.id.substring(d.id.lastIndexOf(".") + 1)
+                        .split(/(?=[A-Z][^A-Z])/g).concat(format(d.data.GradRate) + "%"); })
+                .enter().append("tspan")
+                .attr("x", 4)
+                .attr("y", function(d, i) { return 13 + i * 10; })
+                .text(function(d) { return d; });
+
+        cell.append("title")
+                .text(function(d) { return d.id + "\nGraduation Rate: " + format(d.data.GradRate) + "%"; });
     });
+
+    function hovered(hover) {
+        return function(d) {
+            d3.selectAll(d.ancestors().map(function(d) { return d.node; }))
+                    .classed("node--hover", hover)
+                    .select("rect")
+                    .attr("width", function(d) { return d.x1 - d.x0 - hover; })
+                    .attr("height", function(d) { return d.y1 - d.y0 - hover; });
+        };
+    }
 
 </script>
 
