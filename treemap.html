@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <meta charset="utf-8">
-<style>
 
+<style>
     body {
         font: 10px sans-serif;
         position: relative;
@@ -28,12 +28,72 @@
     .node-value {
         font-weight: bold;
     }
-
 </style>
+
 <body>
 <link href="style.css" rel="stylesheet">
 <script src="//d3js.org/d3.v4.0.0-alpha.49.min.js"></script>
 
-<script src="treemap.js"></script>
+<script>
+    var root;
+
+    var width = 960;
+    var height = 1060;
+
+    var treemap = d3.treemap()
+            .size([width, height])
+            .padding(1);
+
+    d3.csv("treemap2.csv", function(error, schools) {
+        //read in the data
+        if (error) return console.warn(error);
+        schools.forEach(function(d) {
+            d.School = d.School;
+            d.District = d.District;
+            d.FRPL = +d.FRPL;
+            d.ELL = +d.ELL;
+            d.Total = +d.Total;
+            d.Graduating = +d.Graduating;
+            d.GradRate = (d.Graduating/ d.Total) * 100;
+        });
+
+        dataset = schools;
+
+        var stratify = d3.stratify()
+                .id(function(d) { return d.School; })
+                .parentId(function(d) { return d.District; });
+
+        root = stratify(dataset);
+
+        root
+            .sum(function(d) { return d.GradRate; })
+            .sort(function(a, b) { return b.GradRate - a.GradRate; });
+
+        treemap(root);
+
+        console.log(root);
+
+        var node = d3.select("body")
+                .selectAll(".node")
+                .data(root.leaves())
+                .enter().append("div")
+                .attr("class", "node")
+                .style("left", function(d) { return d.x0 + "px"; })
+                .style("top", function(d) { return d.y0 + "px"; })
+                .style("width", function(d) { return d.x1 - d.x0 + "px"; })
+                .style("height", function(d) { return d.y1 - d.y0 + "px"; });
+
+        node.append("div")
+                .attr("class", "node-label")
+                .text(function(d) { return d.id + ": " + d.data.GradRate.toFixed(2) + "%"});
+
+        node.append("div")
+                .attr("class", "node-value")
+                .text(function(d) { return d.GradRate; });
+    });
+
+</script>
+
+
 </body>
 </html>
