@@ -2,8 +2,12 @@ div {
     border: 1px solid black;
 }
 
-text {
-    color: black;
+.noborder {
+    border: 0px;
+}
+
+#controlContent {
+    padding-left: 10px;
 }
 
 #layout {
@@ -38,6 +42,21 @@ text {
 #controls {
     width: 276px;
     height:450px;
+    float: right;
+    border-top: 0px;
+}
+
+#treemapVisualization {
+    width: 800px;
+    float: left;
+    border-top: 0;
+    text-align: center;
+    border-right: 0px;
+}
+
+#treemapControls {
+    width: 276px;
+    height:900px;
     float: right;
     border-top: 0px;
 }

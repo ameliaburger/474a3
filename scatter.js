@@ -109,7 +109,7 @@ function drawVis(data) { //draw the circiles initially and on each interaction w
                 .duration(200)
                 .style("opacity", 0.8);
             tooltip.html("District: " + d.District + "<br/>School: " + d.School + "<br/>Graduation Rate: " +
-                d.FRPLGradRate + "%<br/>Percent FRPL: " + d.FRPL + "%")
+                d.FRPLGradRate.toFixed(2) + "%<br/>Percent FRPL: " + d.FRPL.toFixed(2) + "%")
                 .style("left", (d3.event.pageX + 5) + "px")
                 .style("top", (d3.event.pageY - 28) + "px");
         })
