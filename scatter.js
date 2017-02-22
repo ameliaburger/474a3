@@ -36,7 +36,7 @@ d3.csv("SchoolData.csv", function(error, schools) {
 // Define variables
 var chart = d3.select(".chart")
     .attr("width", w + margin.left + margin.right)
-    .attr("height", h + margin.top + margin.bottom+15)
+    .attr("height", h + margin.top + margin.bottom + 15)
     .append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
@@ -58,10 +58,11 @@ var xAxis = d3.axisBottom()
 chart.append("g")
     .attr("class", "axis")
     .attr("transform", "translate(0," + h + ")")
-    .call(xAxis)
-    .append("text")
+    .call(xAxis);
+
+chart.append("text")
     .attr("x", w)
-    .attr("y", -6)
+    .attr("y", h - 6)
     .style("text-anchor", "end")
     .text("Percent of Seniors Taking AP/IB/Cambridge Courses");
 
@@ -75,13 +76,24 @@ var yAxis = d3.axisLeft()
 // add the y-axis
 chart.append("g")
     .attr("class", "axis")
-    .call(yAxis)
-    .append("text")
+    .call(yAxis);
+
+chart.append("text")
+    .attr("transform", "rotate(-90)")
+    .attr("y", 0 - margin.left - 3)
+    .attr("x",0 - (height / 2))
+    .attr("dy", "1em")
+    .style("text-anchor", "middle")
+    .text("Graduation Rate of Seniors on Free/Reduced Price Lunch");
+
+/*
+chart.append("text")
     .attr("transform", "rotate(-90)")
     .attr("y", 6)
     .attr("dy", ".71em")
     .style("text-anchor", "end")
-    .text("Graduation Rate (All Students)");
+    .text("Graduation Rate of Seniors on Free/Reduced Price Lunch");
+    */
 
 
 function drawVis(data) { //draw the circiles initially and on each interaction with a control
