@@ -4,12 +4,11 @@ var margin = {top: 20, right: 15, bottom: 30, left: 40};
 var w = width - margin.left - margin.right;
 var h = height - margin.top - margin.bottom; // set the height, width, and margins for the visualization space
 
-// the default set up when the visualization is first loaded, the "all" box should be checked
-// and all the other boxes should be unchecked
-var districts = [["All", true], ["Seattle", false], ["Highline", false],  ["Tukwila", false],
-    ["Renton", false], ["Kent", false], ["Federal Way", false], ["Auburn", false]];
-var currDistricts = districts; // keep track of the current districts that are selected and that should be displayed
+// compare to value when filtering by school district
+var patt = new RegExp("All");
+var currDistrict = "All"; // keep track of district being filtered
 
+// keep track of the value ranges selected for each slider
 var attributes = ["AfricanAmerican", "Latino"];
 var ranges = [[0, 100], [0, 100]];
 
@@ -128,73 +127,23 @@ function drawVis(data) { //draw the circiles initially and on each interaction w
 
 
 
-// filter by school district - is triggered when the checkboxes are checked or unchecked
-function filterType(mydistrict) {
-    // checked "all"
-    if(mydistrict == "All"){
-        // reset currDistricts to default
-        currDistricts[0][1] = true;
-        for (i = 1; i < currDistricts.length; i++) {
-            currDistricts[i][1] = false;
-        }
-
-        // uncheck the other boxes
-        document.getElementById("Seattle").checked = false;
-        document.getElementById("Highline").checked = false;
-        document.getElementById("Tukwila").checked = false;
-        document.getElementById("Renton").checked = false;
-        document.getElementById("Kent").checked = false;
-        document.getElementById("Federal Way").checked = false;
-        document.getElementById("Auburn").checked = false;
-
-        // filter based on current slider selections
+// filter by school district selected in dropdown
+function filterDistrict(mydistrict) {
+    currDistrict = mydistrict;
+    console.log(mydistrict);
+    var res = patt.test(currDistrict);
+    if(res){
         var toVisualize = dataset.filter(function(d) { return isInRange(d)});
-
         drawVis(toVisualize);
-
-    } else {
-        // any box besides "all" checked
-
-        // uncheck the "all" box
-        document.getElementById("All").checked = false;
-
-        // update currDistricts to reflect current checkbox selections
-        currDistricts[0][1] = false;
-        for (i = 1; i < currDistricts.length; i++) {
-            if (currDistricts[i][0] == mydistrict) {
-                if (currDistricts[i][1]) { // check whether the box was just checked or unchecked
-                                            // and update currDistricts accordingly
-                    currDistricts[i][1] = false;
-                    document.getElementById(mydistrict).checked = false;
-
-                } else {
-                    currDistricts[i][1] = true;
-                    document.getElementById(mydistrict).checked = true;
-                }
-            }
-        }
-
-        // filter based on currDistricts
-        var ndata = filterOnCurrDistricts(dataset);
-
-        // filter to account for sliders and drawVis
+    }else{
+        var ndata = dataset
+            .filter(function(d) {
+                return d.District == currDistrict;
+            });
+        // filter by sliders after filtering by district
         ndata = ndata.filter(function(d) { return isInRange(d)});
         drawVis(ndata);
     }
-}
-
-// return the filtered dataset that should be used to create the visualization
-function filterOnCurrDistricts(data) {
-    var newData = [];
-
-    for (i = 0; i < currDistricts.length; i++) {
-        if (currDistricts[i][1]) {
-            newData = newData.concat(data.filter(function(d) {
-                return d['District'].includes(currDistricts[i][0]);
-            }));
-        }
-    }
-    return newData;
 }
 
 
@@ -240,8 +189,12 @@ function filterOnSliders(attr, values) {
     }
 
     var toVisualize = dataset.filter(function(d) { return isInRange(d)});
-    if (!currDistricts[0][1]) {
-        toVisualize = filterOnCurrDistricts(toVisualize);
+
+    // filter by school district
+    if (currDistrict != "All") {
+        toVisualize = toVisualize.filter(function(d) {
+            return d.District == currDistrict;
+        });
     }
     drawVis(toVisualize);
 }
