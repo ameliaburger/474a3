@@ -64,7 +64,7 @@ chart.append("g")
     .attr("x", w)
     .attr("y", -6)
     .style("text-anchor", "end")
-    .text("Percent Students on Free/Reduced Price Lunch (Low Income)");
+    .text("Percent of Seniors Taking AP/IB/Cambridge Courses");
 
 var y = d3.scaleLinear()
     .domain([0, 100])
@@ -73,6 +73,7 @@ var y = d3.scaleLinear()
 var yAxis = d3.axisLeft()
     .scale(y);
 
+// add the y-axis
 chart.append("g")
     .attr("class", "axis")
     .call(yAxis)
@@ -84,32 +85,37 @@ chart.append("g")
     .text("Graduation Rate (All Students)");
 
 
-
-
 function drawVis(data) { //draw the circiles initially and on each interaction with a control
 
     var circle = chart.selectAll("circle")
         .data(data);
 
+    // update circles as needed
     circle
-        .attr("cx", function(d) { return x(d.FRPL);  })
-        .attr("cy", function(d) { return y(d.GradRate);  })
+        .attr("cx", function(d) { return x(d.RigorousCourses);  })
+        .attr("cy", function(d) { return y(d.FRPLGradRate);  })
         .style("fill", function(d) { return col(d.District); });
 
     circle.exit().remove();
 
+    // adding circles, setting their properties, including tooltip
     circle.enter().append("circle")
-        .attr("cx", function(d) { return x(d.FRPL);  })
-        .attr("cy", function(d) { return y(d.GradRate);  })
+        .attr("cx", function(d) { return x(d.RigorousCourses);  })
+        .attr("cy", function(d) { return y(d.FRPLGradRate);  })
         .attr("r", 4)
         .style("fill", function(d) { return col(d.District); })
         .style("stroke", "black")
         .on("mouseover", function(d) {
             tooltip.transition()
                 .duration(200)
-                .style("opacity", 0.8);
-            tooltip.html("District: " + d.District + "<br/>School: " + d.School + "<br/>Graduation Rate: " +
-                d.FRPLGradRate.toFixed(2) + "%<br/>Percent FRPL: " + d.FRPL.toFixed(2) + "%")
+                .style("opacity", 0.9);
+
+            // the content to be displayed in the tooltip
+            tooltip.html("District: " + d.District + "<br/>School: " + d.School + "<br/>Graduation Rate (FRPL): " +
+                d.FRPLGradRate.toFixed(2) + "%<br/>Graduates that took AP/IB/Cambridge Courses: "
+                    + d.RigorousCourses.toFixed(2) + "%<br/>Black/African American: "
+                    + d.AfricanAmerican.toFixed(2) + "%<br/>Hispanic/Latino: "
+                    + d.AfricanAmerican.toFixed(2) + "%")
                 .style("left", (d3.event.pageX + 5) + "px")
                 .style("top", (d3.event.pageY - 28) + "px");
         })
@@ -225,6 +231,7 @@ $(function() {
     $("#latinopercent").val($("#Latino").slider("values", 0) + " - " + $("#Latino").slider("values", 1));
 }); //end function
 
+// filter the data based on the values in both sliders
 function filterOnSliders(attr, values) {
     for (i = 0; i < attributes.length; i++){
         if (attr == attributes[i]){
@@ -239,6 +246,7 @@ function filterOnSliders(attr, values) {
     drawVis(toVisualize);
 }
 
+// check if the data point fits within the ranges of both sliders
 function isInRange(datum) {
     for (i = 0; i < attributes.length; i++) {
         if (datum[attributes[i]] < ranges[i][0] || datum[attributes[i]] > ranges[i][1]) {

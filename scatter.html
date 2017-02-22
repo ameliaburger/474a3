@@ -27,7 +27,7 @@
 
 <div id="layout">
     <div id="title">
-        <p>Percentage of Students that are Low Income vs. Graduation Rate</p>
+        <p>Graduation Rates of High School Seniors on Free/Reduced Price Lunch (FRPL, Low Income)</p>
     </div>
     <div id="visualization">
         <svg class="chart"></svg>
@@ -70,6 +70,18 @@
         <div id="Latino" class="slider-range"></div>
         <label class="sliderlabel" for="latinopercent">Percent range:</label>
         <input type="text" id="latinopercent" readonly style="border:0; color:#f6931f; font-weight:bold;">
+
+
+        <!--caption and switch to treemap button-->
+        <div id="innerControls" class="noborder">
+            <p>
+                This scatterplot visualizes how the graduation rate of high school seniors in Seattle and South King County who are
+                on Free or Reduced Price Lunch (FRPL), which is an indicator of whether a student is low income, is influenced by
+                the percentage of graduating seniors who took rigorous courses such AP, IB, or Cambridge courses. By mousing
+                over a data point, you can see the school name, school district, and demographic information.
+            </p>
+        </div>
+        <a href="treemap.html">Switch to Treemap</a>
     </div>
 </div>
 </body>

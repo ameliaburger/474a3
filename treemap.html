@@ -27,27 +27,24 @@
 
 <div id="layout">
     <div id="title">
-        <p>High School Senior Graduation Rates</p>
+        <p>Graduation Rates of High School Seniors on Free/Reduced Price Lunch (FRPL, Low Income)</p>
     </div>
     <div id="treemapVisualization">
         <svg width="800" height="900"></svg>
         <script src="treemap.js"></script>
     </div>
     <div id="treemapControls">
-
-        <div id="controlContent" class="noborder">
-            <!--radio buttons to determine how to size treemap boxes-->
-            <br/>
-            <label class="label">Size Boxes:</label>
-            <form name="myform">
-                <input id="GradRate" type="radio" value="GradRate" onchange='reSize(this.value)'
-                       checked> Graduation Rate (All Students)<br>
-                <input id="FRPLGradRate" type="radio" value="FRPLGradRate"
-                       onchange='reSize(this.value)'> Graduation Rate (Free/Reduced Price Lunch Students)<br>
-                <input id="RigorousCourses" type="radio" value="RigorousCourses"
-                       onchange='reSize(this.value)'> Percent of Seniors Taking Rigorous Courses (AP/IB)<br>
-            </form>
+        <div id="innerControls" class="noborder">
+            <p>
+                This treemap visualizes the graduation rate of high school seniors in Seattle and South King County who are
+                on Free or Reduced Price Lunch (FRPL), which is an indicator of whether a student is low income. The larger the
+                rectangle, the higher the graduation rate. By mousing over the name of a school or school district, you can see
+                additional demographic information.
+            </p>
         </div>
+        <a href="scatter.html">Switch to Scatterplot</a>
+    </div>
+
 
     </div>
 </div>

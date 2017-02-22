@@ -15,7 +15,7 @@ div {
     height: 680px;
 }
 
-#title, #controls, #infobar {
+#title, #controls, #treemapControls {
     font-family: 'Raleway', sans-serif;
     text-align: center;
 }
@@ -61,6 +61,13 @@ div {
     border-top: 0px;
 }
 
+#innerControls {
+    padding-left: 10px;
+    padding-right: 10px;
+    font-size: 10px;
+    text-align: left;
+}
+
 .tooltip {
     position: absolute;
     pointer-events: none;
@@ -76,3 +83,6 @@ div {
     font-weight: bold;
 }
 
+a {
+    font-size: 14px;
+}
