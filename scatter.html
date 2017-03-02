@@ -29,7 +29,7 @@
     </div>
     <div id="visualization">
         <svg class="scatterplot"></svg>
-        <svg class="treemap"></svg>
+        <svg class="tree"></svg>
         <script src="scatter.js"></script>
     </div>
     <div id="controls">
@@ -39,24 +39,20 @@
         <input type="text" id="mytype" readonly style="border:0; color:#f6931f; font-weight:bold;">
         <br>
 
-        <!--the school district check boxes-->
-        <label><input id="All" type='checkbox' value="All" checked onchange='filterType(this.value)'>All</label><br>
-        <label><input id="Seattle" type='checkbox' value="Seattle"
-                      onchange='filterType(this.value)'>Seattle Public Schools</label><br/>
-        <label><input id="Highline" type='checkbox' value="Highline"
-                      onchange='filterType(this.value)'>Highline Public Schools</label><br/>
-        <label><input id="Tukwila" type='checkbox' value="Tukwila"
-                      onchange='filterType(this.value)'>Tukwila School District</label><br/>
-        <label><input id="Renton" type='checkbox' value="Renton"
-                      onchange='filterType(this.value)'>Renton School District</label><br/>
-        <label><input id="Kent" type='checkbox' value="Kent"
-                      onchange='filterType(this.value)'>Kent School District</label><br/>
-        <label><input id="Federal Way" type='checkbox' value="Federal Way"
-                      onchange='filterType(this.value)'>Federal Way Public Schools</label><br/>
-        <label><input id="Auburn" type='checkbox' value="Auburn"
-                      onchange='filterType(this.value)'>Auburn School District</label><br/>
+        <!--the school district dropdown-->
+        <select id="myselectform" onchange="filterDistrict(this.value)">
+            <option value="All">All</option>
+            <option value="Seattle Public Schools">Seattle Public Schools</option>
+            <option value="Highline Public Schools">Highline Public Schools</option>
+            <option value="Tukwila School District">Tukwila School District</option>
+            <option value="Renton School District">Renton School District</option>
+            <option value="Kent School District">Kent School District</option>
+            <option value="Federal Way Public Schools">Federal Way Public Schools</option>
+            <option value="Auburn School District">Auburn School District</option>
+        </select>
 
         <!--sliders-->
+        <br/>
         <br/>
         <label class="label">Percent Black/African American</label>
         <div id="AfricanAmerican" class="slider-range"></div>
