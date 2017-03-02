@@ -1,14 +1,15 @@
-var width = 750;
-var height = 450;
+var width = 800;
+var height = 275;
 var margin = {top: 20, right: 15, bottom: 30, left: 40};
 var w = width - margin.left - margin.right;
 var h = height - margin.top - margin.bottom; // set the height, width, and margins for the visualization space
 
-// compare to value when filtering by school district
-var patt = new RegExp("All");
-var currDistrict = "All"; // keep track of district being filtered
+// the default set up when the visualization is first loaded, the "all" box should be checked
+// and all the other boxes should be unchecked
+var districts = [["All", true], ["Seattle", false], ["Highline", false],  ["Tukwila", false],
+    ["Renton", false], ["Kent", false], ["Federal Way", false], ["Auburn", false]];
+var currDistricts = districts; // keep track of the current districts that are selected and that should be displayed
 
-// keep track of the value ranges selected for each slider
 var attributes = ["AfricanAmerican", "Latino"];
 var ranges = [[0, 100], [0, 100]];
 
@@ -34,9 +35,9 @@ d3.csv("SchoolData.csv", function(error, schools) {
 });
 
 // Define variables
-var chart = d3.select(".chart")
+var scatterplot = d3.select(".scatterplot")
     .attr("width", w + margin.left + margin.right)
-    .attr("height", h + margin.top + margin.bottom + 15)
+    .attr("height", h + margin.top + margin.bottom+15)
     .append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
@@ -54,13 +55,14 @@ var x = d3.scaleLinear()
 var xAxis = d3.axisBottom()
     .scale(x);
 
+
 // add the x-axis to the vis
-chart.append("g")
+scatterplot.append("g")
     .attr("class", "axis")
     .attr("transform", "translate(0," + h + ")")
     .call(xAxis);
 
-chart.append("text")
+scatterplot.append("text")
     .attr("x", w)
     .attr("y", h - 6)
     .style("text-anchor", "end")
@@ -74,31 +76,22 @@ var yAxis = d3.axisLeft()
     .scale(y);
 
 // add the y-axis
-chart.append("g")
+scatterplot.append("g")
     .attr("class", "axis")
     .call(yAxis);
 
-chart.append("text")
+scatterplot.append("text")
     .attr("transform", "rotate(-90)")
     .attr("y", 0 - margin.left - 3)
     .attr("x",0 - (height / 2))
     .attr("dy", "1em")
     .style("text-anchor", "middle")
-    .text("Graduation Rate of Seniors on Free/Reduced Price Lunch");
-
-/*
-chart.append("text")
-    .attr("transform", "rotate(-90)")
-    .attr("y", 6)
-    .attr("dy", ".71em")
-    .style("text-anchor", "end")
-    .text("Graduation Rate of Seniors on Free/Reduced Price Lunch");
-    */
+    .text("Graduation Rate");
 
 
 function drawVis(data) { //draw the circiles initially and on each interaction with a control
 
-    var circle = chart.selectAll("circle")
+    var circle = scatterplot.selectAll("circle")
         .data(data);
 
     // update circles as needed
@@ -124,9 +117,9 @@ function drawVis(data) { //draw the circiles initially and on each interaction w
             // the content to be displayed in the tooltip
             tooltip.html("District: " + d.District + "<br/>School: " + d.School + "<br/>Graduation Rate (FRPL): " +
                 d.FRPLGradRate.toFixed(2) + "%<br/>Graduates that took AP/IB/Cambridge Courses: "
-                    + d.RigorousCourses.toFixed(2) + "%<br/>Black/African American: "
-                    + d.AfricanAmerican.toFixed(2) + "%<br/>Hispanic/Latino: "
-                    + d.AfricanAmerican.toFixed(2) + "%")
+                + d.RigorousCourses.toFixed(2) + "%<br/>Black/African American: "
+                + d.AfricanAmerican.toFixed(2) + "%<br/>Hispanic/Latino: "
+                + d.AfricanAmerican.toFixed(2) + "%")
                 .style("left", (d3.event.pageX + 5) + "px")
                 .style("top", (d3.event.pageY - 28) + "px");
         })
@@ -139,23 +132,73 @@ function drawVis(data) { //draw the circiles initially and on each interaction w
 
 
 
-// filter by school district selected in dropdown
-function filterDistrict(mydistrict) {
-    currDistrict = mydistrict;
-    console.log(mydistrict);
-    var res = patt.test(currDistrict);
-    if(res){
+// filter by school district - is triggered when the checkboxes are checked or unchecked
+function filterType(mydistrict) {
+    // checked "all"
+    if(mydistrict == "All"){
+        // reset currDistricts to default
+        currDistricts[0][1] = true;
+        for (i = 1; i < currDistricts.length; i++) {
+            currDistricts[i][1] = false;
+        }
+
+        // uncheck the other boxes
+        document.getElementById("Seattle").checked = false;
+        document.getElementById("Highline").checked = false;
+        document.getElementById("Tukwila").checked = false;
+        document.getElementById("Renton").checked = false;
+        document.getElementById("Kent").checked = false;
+        document.getElementById("Federal Way").checked = false;
+        document.getElementById("Auburn").checked = false;
+
+        // filter based on current slider selections
         var toVisualize = dataset.filter(function(d) { return isInRange(d)});
+
         drawVis(toVisualize);
-    }else{
-        var ndata = dataset
-            .filter(function(d) {
-                return d.District == currDistrict;
-            });
-        // filter by sliders after filtering by district
+
+    } else {
+        // any box besides "all" checked
+
+        // uncheck the "all" box
+        document.getElementById("All").checked = false;
+
+        // update currDistricts to reflect current checkbox selections
+        currDistricts[0][1] = false;
+        for (i = 1; i < currDistricts.length; i++) {
+            if (currDistricts[i][0] == mydistrict) {
+                if (currDistricts[i][1]) { // check whether the box was just checked or unchecked
+                    // and update currDistricts accordingly
+                    currDistricts[i][1] = false;
+                    document.getElementById(mydistrict).checked = false;
+
+                } else {
+                    currDistricts[i][1] = true;
+                    document.getElementById(mydistrict).checked = true;
+                }
+            }
+        }
+
+        // filter based on currDistricts
+        var ndata = filterOnCurrDistricts(dataset);
+
+        // filter to account for sliders and drawVis
         ndata = ndata.filter(function(d) { return isInRange(d)});
         drawVis(ndata);
     }
+}
+
+// return the filtered dataset that should be used to create the visualization
+function filterOnCurrDistricts(data) {
+    var newData = [];
+
+    for (i = 0; i < currDistricts.length; i++) {
+        if (currDistricts[i][1]) {
+            newData = newData.concat(data.filter(function(d) {
+                return d['District'].includes(currDistricts[i][0]);
+            }));
+        }
+    }
+    return newData;
 }
 
 
@@ -201,12 +244,8 @@ function filterOnSliders(attr, values) {
     }
 
     var toVisualize = dataset.filter(function(d) { return isInRange(d)});
-
-    // filter by school district
-    if (currDistrict != "All") {
-        toVisualize = toVisualize.filter(function(d) {
-            return d.District == currDistrict;
-        });
+    if (!currDistricts[0][1]) {
+        toVisualize = filterOnCurrDistricts(toVisualize);
     }
     drawVis(toVisualize);
 }

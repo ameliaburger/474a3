@@ -1,3 +1,36 @@
+/* sizing for the entire layout, the title, the visualization and the control sidebar */
+#layout {
+    width: 1150px;
+    height: 680px;
+    border: none;
+}
+
+#title {
+    text-align: center;
+    width: 276px;
+    height: 50px;
+    font-size: 18px;
+    float: right;
+}
+
+#controls {
+    width: 276px;
+    height:550px;
+    float: right;
+    border-top: 0px;
+}
+
+#visualization {
+    width: 870px;
+    height:600px;
+    float: left;
+    text-align: center;
+    border: none;
+}
+
+
+/* other style rules */
+
 div {
     border: 1px solid black;
 }
@@ -10,40 +43,11 @@ div {
     padding-left: 10px;
 }
 
-#layout {
-    width: 1080px;
-    height: 680px;
-}
+
 
 #title, #controls, #treemapControls {
     font-family: 'Raleway', sans-serif;
     text-align: center;
-}
-
-#title {
-    text-align: center;
-    height: 50px;
-    font-size: 20px;
-}
-
-#layout {
-    border: none;
-}
-
-#visualization {
-    width: 800px;
-    height:450px;
-    float: left;
-    border-top: 0;
-    text-align: center;
-    border-right: 0px;
-}
-
-#controls {
-    width: 276px;
-    height:450px;
-    float: right;
-    border-top: 0px;
 }
 
 #treemapVisualization {
