@@ -11,13 +11,13 @@
     height: 50px;
     font-size: 18px;
     float: right;
+    border-bottom: none;
 }
 
 #controls {
     width: 276px;
-    height:550px;
     float: right;
-    border-top: 0px;
+    border-top: none;
 }
 
 #visualization {
@@ -31,6 +31,11 @@
 
 /* other style rules */
 
+#caption {
+    text-align: left;
+    font-size: 10px;
+}
+
 div {
     border: 1px solid black;
 }
@@ -42,7 +47,6 @@ div {
 #controlContent {
     padding-left: 10px;
 }
-
 
 
 #title, #controls, #treemapControls {
@@ -93,4 +97,9 @@ a {
 
 text {
     font-color: black;
+    font-size: 9px;
+}
+
+.node--hover rect {
+    stroke: #000;
 }

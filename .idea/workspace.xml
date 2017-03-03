@@ -21,45 +21,31 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="scatter.html" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/scatter.html">
+      <file leaf-file-name="index.html" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/index.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-16.875">
-              <caret line="31" column="24" selection-start-line="31" selection-start-column="24" selection-end-line="31" selection-end-column="24" />
-              <folding>
-                <element signature="n#style#0;n#input#0;n#div#2;n#div#0;n#body#0;n#!!top" expanded="true" />
-                <element signature="n#style#0;n#input#1;n#div#2;n#div#0;n#body#0;n#!!top" expanded="true" />
-                <element signature="n#style#0;n#input#2;n#div#2;n#div#0;n#body#0;n#!!top" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="scatter.js" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/scatter.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.84827584">
-              <caret line="84" column="39" selection-start-line="84" selection-start-column="39" selection-end-line="84" selection-end-column="39" />
+            <state vertical-scroll-proportion="-21.083334">
+              <caret line="80" column="27" selection-start-line="80" selection-start-column="27" selection-end-line="80" selection-end-column="27" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="treemap.js" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/treemap.js">
+      <file leaf-file-name="app.js" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/app.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-12.222222">
-              <caret line="85" column="3" selection-start-line="85" selection-start-column="3" selection-end-line="127" selection-end-column="11" />
+            <state vertical-scroll-proportion="0.6275862">
+              <caret line="318" column="32" selection-start-line="318" selection-start-column="32" selection-end-line="318" selection-end-column="32" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="treemap.html" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/treemap.html">
+      <file leaf-file-name="style.css" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/style.css">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-17.958334">
-              <caret line="41" column="26" selection-start-line="41" selection-start-column="26" selection-end-line="41" selection-end-column="26" />
+            <state vertical-scroll-proportion="0.0">
+              <caret line="35" column="20" selection-start-line="35" selection-start-column="20" selection-end-line="35" selection-end-column="20" />
               <folding />
             </state>
           </provider>
@@ -83,11 +69,13 @@
         <option value="$PROJECT_DIR$/treemap2.csv" />
         <option value="$PROJECT_DIR$/treemap.csv" />
         <option value="$PROJECT_DIR$/SchoolData.csv" />
-        <option value="$PROJECT_DIR$/treemap.js" />
-        <option value="$PROJECT_DIR$/treemap.html" />
-        <option value="$PROJECT_DIR$/style.css" />
         <option value="$PROJECT_DIR$/scatter.html" />
+        <option value="$PROJECT_DIR$/treemap.html" />
+        <option value="$PROJECT_DIR$/treemap.js" />
         <option value="$PROJECT_DIR$/scatter.js" />
+        <option value="$PROJECT_DIR$/index.html" />
+        <option value="$PROJECT_DIR$/style.css" />
+        <option value="$PROJECT_DIR$/app.js" />
       </list>
     </option>
   </component>
@@ -292,22 +280,26 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/scatter.html">
+    <entry file="file://$PROJECT_DIR$/treemap.html">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="70" column="51" selection-start-line="70" selection-start-column="51" selection-end-line="70" selection-end-column="51" />
-          <folding>
-            <element signature="n#style#0;n#input#0;n#div#2;n#div#0;n#body#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#input#1;n#div#2;n#div#0;n#body#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#input#2;n#div#2;n#div#0;n#body#0;n#!!top" expanded="true" />
-          </folding>
+          <caret line="29" column="27" selection-start-line="29" selection-start-column="27" selection-end-line="29" selection-end-column="27" />
+          <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/scatter.js">
+    <entry file="file://$PROJECT_DIR$/treemap.js">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="82" column="34" selection-start-line="82" selection-start-column="34" selection-end-line="82" selection-end-column="34" />
+          <caret line="96" column="4" selection-start-line="96" selection-start-column="4" selection-end-line="105" selection-end-column="41" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/style.css">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="95" column="16" selection-start-line="95" selection-start-column="16" selection-end-line="95" selection-end-column="16" />
           <folding />
         </state>
       </provider>
@@ -328,50 +320,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/scatter.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="70" column="51" selection-start-line="70" selection-start-column="51" selection-end-line="70" selection-end-column="51" />
-          <folding>
-            <element signature="n#style#0;n#input#0;n#div#2;n#div#0;n#body#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#input#1;n#div#2;n#div#0;n#body#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#input#2;n#div#2;n#div#0;n#body#0;n#!!top" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/scatter.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/style.css">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="90" column="22" selection-start-line="90" selection-start-column="22" selection-end-line="90" selection-end-column="22" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/scatter.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="70" column="51" selection-start-line="70" selection-start-column="51" selection-end-line="70" selection-end-column="51" />
-          <folding>
-            <element signature="n#style#0;n#input#0;n#div#2;n#div#0;n#body#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#input#1;n#div#2;n#div#0;n#body#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#input#2;n#div#2;n#div#0;n#body#0;n#!!top" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/scatter.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding />
         </state>
       </provider>
@@ -398,43 +350,11 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/scatter.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="52" column="60" selection-start-line="52" selection-start-column="60" selection-end-line="52" selection-end-column="60" />
-          <folding>
-            <element signature="n#style#0;n#input#0;n#div#2;n#div#0;n#body#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#input#1;n#div#2;n#div#0;n#body#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#input#2;n#div#2;n#div#0;n#body#0;n#!!top" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/scatter.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/style.css">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="9" column="22" selection-start-line="9" selection-start-column="22" selection-end-line="9" selection-end-column="22" />
           <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/scatter.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding>
-            <element signature="n#style#0;n#input#0;n#div#2;n#div#0;n#body#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#input#1;n#div#2;n#div#0;n#body#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#input#2;n#div#2;n#div#0;n#body#0;n#!!top" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -446,14 +366,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/scatter.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="122" column="21" selection-start-line="122" selection-start-column="21" selection-end-line="122" selection-end-column="21" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/treemap.csv">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
@@ -461,54 +373,49 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/style.css">
+    <entry file="file://$PROJECT_DIR$/SchoolData.csv">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="27" column="17" selection-start-line="27" selection-start-column="17" selection-end-line="27" selection-end-column="17" />
+          <caret line="45" column="96" selection-start-line="45" selection-start-column="96" selection-end-line="45" selection-end-column="96" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/treemap.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="96" column="4" selection-start-line="96" selection-start-column="4" selection-end-line="105" selection-end-column="41" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/treemap.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-17.958334">
-          <caret line="41" column="26" selection-start-line="41" selection-start-column="26" selection-end-line="41" selection-end-column="26" />
+        <state vertical-scroll-proportion="-10.625">
+          <caret line="17" column="4" selection-start-line="17" selection-start-column="4" selection-end-line="19" selection-end-column="5" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/SchoolData.csv">
+    <entry file="file://$PROJECT_DIR$/index.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-21.083334">
+          <caret line="80" column="27" selection-start-line="80" selection-start-column="27" selection-end-line="80" selection-end-column="27" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/style.css">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="45" column="96" selection-start-line="45" selection-start-column="96" selection-end-line="45" selection-end-column="96" />
+          <caret line="35" column="20" selection-start-line="35" selection-start-column="20" selection-end-line="35" selection-end-column="20" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/scatter.html">
+    <entry file="file://$PROJECT_DIR$/app.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-16.875">
-          <caret line="31" column="24" selection-start-line="31" selection-start-column="24" selection-end-line="31" selection-end-column="24" />
-          <folding>
-            <element signature="n#style#0;n#input#0;n#div#2;n#div#0;n#body#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#input#1;n#div#2;n#div#0;n#body#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#input#2;n#div#2;n#div#0;n#body#0;n#!!top" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/treemap.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-12.222222">
-          <caret line="85" column="3" selection-start-line="85" selection-start-column="3" selection-end-line="127" selection-end-column="11" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/scatter.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.84827584">
-          <caret line="84" column="39" selection-start-line="84" selection-start-column="39" selection-end-line="84" selection-end-column="39" />
+        <state vertical-scroll-proportion="0.6275862">
+          <caret line="318" column="32" selection-start-line="318" selection-start-column="32" selection-end-line="318" selection-end-column="32" />
           <folding />
         </state>
       </provider>

@@ -8,15 +8,11 @@ var format = d3.format(",d");
 
 var treemap = d3.treemap()
     .size([width, height])
-    .paddingOuter(3)
-    .paddingTop(19)
     .paddingInner(1)
     .round(true);
 
 // scale to color treemap nodes based on depth
-var color = d3.scaleLinear()
-    .domain([0, 2])
-    .range(["steelblue", "white"]);
+var color = d3.scaleOrdinal(d3.schemeCategory20);
 
 // loading the dataset
 d3.csv("treemap.csv", function(error, schools) {
@@ -61,7 +57,7 @@ function drawTree(root) {
     // create a cell for each individual node in the tree
     var cell = svg
         .selectAll(".node")
-        .data(root.descendants())
+        .data(root.leaves())
         .enter().append("g")
         .attr("transform", function(d) { return "translate(" + d.x0 + "," + d.y0 + ")"; })
         .attr("class", "node")
@@ -74,7 +70,7 @@ function drawTree(root) {
         .attr("id", function(d) { return "rect-" + d.id; })
         .attr("width", function(d) { return d.x1 - d.x0; })
         .attr("height", function(d) { return d.y1 - d.y0; })
-        .style("fill", function(d) { return color(d.depth); });
+        .style("fill", function(d) { return color(d.data.District); });
 
     // format text in the rectangle so that is clipped off when it reaches the edge rather than
     // overflowing
