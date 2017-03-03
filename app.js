@@ -11,17 +11,21 @@ var h = height - margin.top - margin.bottom; // set the height, width, and margi
 
 var dataset; //the full dataset
 var scatterData; //the dataset without district or "all" data
+var stratify; // to put the data into a hierarchical format
 
 // color scale for school districts
 var col = d3.scaleOrdinal(d3.schemeCategory10);
 
+var opacity = 0.8;
+
+var districts = [["All", true], ["Seattle Public Schools", false], ["Highline Public Schools", false],
+    ["Tukwila School District", false], ["Renton School District", false], ["Kent School District", false],
+    ["Federal Way Public Schools", false], ["Auburn School District", false]];
+var currDistricts = districts; // keep track of the current districts that are selected and that should be displayed
+
 
 
 // VARIABLES - SCATTERPLOT
-
-// compare to value when filtering by school district
-var patt = new RegExp("All");
-var currDistrict = "All"; // keep track of district being filtered
 
 // keep track of the value ranges selected for each slider
 var attributes = ["AfricanAmerican", "Latino"];
@@ -32,10 +36,6 @@ var scatterplot = d3.select(".scatterplot")
     .attr("height", h + margin.top + margin.bottom)
     .append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-var tooltip = d3.select("body").append("div")
-    .attr("class", "tooltip")
-    .style("opacity", 0);
 
 var x = d3.scaleLinear()
     .domain([0, 100])
@@ -90,9 +90,6 @@ var treemap = d3.treemap()
     .paddingInner(1)
     .round(true);
 
-// used to format labels in the treemap
-var format = d3.format(",d");
-
 
 
 
@@ -118,7 +115,9 @@ d3.csv("treemap.csv", function(error, schools) { // load the data set
     // filter scatterData so that only the individual schools are included
     scatterData = dataset
         .filter(function(d) {
-            return d.District != ("All" || "");
+            return d.District != "All";
+        }).filter(function(d) {
+            return d.District != "";
         });
 
     //all the data is now loaded, so draw the initial scatterplot
@@ -127,14 +126,14 @@ d3.csv("treemap.csv", function(error, schools) { // load the data set
 
     // TREEMAP:
     // change the data to a hierarchical format
-    var stratify = d3.stratify()
+    stratify = d3.stratify()
         .id(function (d) {
             return d.School;
         })
         .parentId(function (d) {
             return d.District;
         });
-    root = stratify(dataset);
+    var root = stratify(dataset);
 
     // size the nodes based on the grad rate of seniors on Free/Reduced Price Lunch and create the treemap
     root
@@ -171,55 +170,105 @@ function drawVis(data) { //draw the circiles initially and on each interaction w
         .attr("r", 5)
         .style("fill", function(d) { return col(d.District); })
         .style("stroke", "black")
+        .style("opacity", opacity)
         .on("mouseover", function(d) {
-            var caption = document.getElementById("caption");
-
-            caption.innerHTML = "District: " + d.District + "<br/>School: " + d.School + "<br/>Graduation Rate (FRPL): " +
-                d.FRPLGradRate.toFixed(2) + "%<br/>Graduates that took AP/IB/Cambridge Courses: "
+            var caption = document.getElementById("caption").innerHTML = "School: " + d.School +
+                "<br/>District: " + d.District + "<br/>Graduation Rate (FRPL): "
+                + d.FRPLGradRate.toFixed(2) + "%<br/>Graduates that took AP/IB Courses: "
                 + d.RigorousCourses.toFixed(2) + "%<br/>Black/African American: "
                 + d.AfricanAmerican.toFixed(2) + "%<br/>Hispanic/Latino: "
-                + d.AfricanAmerican.toFixed(2) + "%";
+                + d.Latino.toFixed(2) + "%";
 
-            tooltip.transition()
-                .duration(200)
-                .style("opacity", 0.9);
+            d3.select(this).attr("r", 11)
+                .style("opacity", 1);
 
-            // the content to be displayed in the tooltip
-            tooltip.html("District: " + d.District + "<br/>School: " + d.School + "<br/>Graduation Rate (FRPL): " +
-                d.FRPLGradRate.toFixed(2) + "%<br/>Graduates that took AP/IB/Cambridge Courses: "
-                + d.RigorousCourses.toFixed(2) + "%<br/>Black/African American: "
-                + d.AfricanAmerican.toFixed(2) + "%<br/>Hispanic/Latino: "
-                + d.AfricanAmerican.toFixed(2) + "%")
-                .style("left", (d3.event.pageX + 5) + "px")
-                .style("top", (d3.event.pageY - 28) + "px");
+            // highlight the appropriate rectangle on the scatterplot
+            d3.selectAll(".node")
+                .select( function(treeD) { return treeD.data.School == d.School?this:null; })
+                .classed("node--hover", true);
+            d3.selectAll("rect")
+                .select( function(treeD) { return treeD.data.School == d.School?this:null; })
+                .style("opacity", 1);
         })
         .on("mouseout", function(d) {
-            var caption = document.getElementById("caption");
+            var caption = document.getElementById("caption").innerHTML = "";
 
-            caption.innerHTML = "";
+            d3.select(this).attr("r", 5)
+                .style("opacity", opacity);
 
-            tooltip.transition()
-                .duration(500)
-                .style("opacity", 0);
+            // unhighlight the appropriate rectangle on the scatterplot
+            d3.selectAll(".node")
+                .select( function(treeD) { return treeD.data.School == d.School?this:null; })
+                .classed("node--hover", false);
+            d3.selectAll("rect")
+                .select( function(treeD) { return treeD.data.School == d.School?this:null; })
+                .style("opacity", opacity);
         });
 }
 
 // filter by school district selected in dropdown
 function filterDistrict(mydistrict) {
-    currDistrict = mydistrict;
-    console.log(mydistrict);
-    var res = patt.test(currDistrict);
-    if(res){
+    // reset currDistricts to default
+    currDistricts[0][1] = true;
+    for (i = 1; i < currDistricts.length; i++) {
+        currDistricts[i][1] = false;
+    }
+
+    if(mydistrict == "All"){
         var toVisualize = scatterData.filter(function(d) { return isInRange(d)});
         drawVis(toVisualize);
+
+        //TREEMAP
+        var root = stratify(dataset);
+
+        // size the nodes based on the grad rate of seniors on Free/Reduced Price Lunch and create the treemap
+        root
+            .sum(function(d) { return d.FRPLGradRate; })
+            .sort(function(a, b) { return b.height - a.height || b.FRPLGradRate - a.FRPLGradRate; })
+        ;
+        treemap(root);
+
+        drawTree(root)
     }else{
+
+        // update currDistricts to reflect current checkbox selections
+        currDistricts[0][1] = false;
+        for (i = 1; i < currDistricts.length; i++) {
+            if (currDistricts[i][0] == mydistrict) {
+                currDistricts[i][1] = true;
+            }
+        }
+
+        //SCATTERPLOT
         var ndata = scatterData
             .filter(function(d) {
-                return d.District == currDistrict;
+                return d.District == mydistrict;
             });
         // filter by sliders after filtering by district
         ndata = ndata.filter(function(d) { return isInRange(d)});
         drawVis(ndata);
+
+
+        // TREEMAP
+        var nTree = dataset;
+        for (i = 1; i < currDistricts.length; i++) {
+            if (!currDistricts[i][1]) {
+                nTree = nTree.filter(function(d) {
+                    return d.District != currDistricts[i][0];
+                });
+            }
+        }
+
+        var root = stratify(nTree);
+
+        // size the nodes based on the grad rate of seniors on Free/Reduced Price Lunch and create the treemap
+        root
+            .sum(function(d) { return d.FRPLGradRate; })
+            .sort(function(a, b) { return b.height - a.height || b.FRPLGradRate - a.FRPLGradRate; })
+        ;
+        treemap(root);
+
+        drawTree(root)
     }
 }
 
@@ -292,7 +341,27 @@ function isInRange(datum) {
 // FUNCTIONS - TREEMAP
 function drawTree(root) { // add the treemap to the visualization
 
+
+    /*
+    var circle = scatterplot.selectAll("circle")
+        .data(data);
+
+    // update circles as needed
+    circle
+        .attr("cx", function(d) { return x(d.RigorousCourses);  })
+        .attr("cy", function(d) { return y(d.FRPLGradRate);  })
+        .style("fill", function(d) { return col(d.District); });
+
+    circle.exit().remove();
+
+     // adding circles, setting their properties, including tooltip
+     circle.enter().append("circle")
+     .attr("cx", function(d) { return x(d.RigorousCourses);  })
+     .attr("cy", function(d) { return y(d.FRPLGradRate);  })
+    */
+
     // create a cell for each individual node in the tree
+
     var cell = tree
         .selectAll(".node")
         .data(root.leaves())
@@ -301,30 +370,34 @@ function drawTree(root) { // add the treemap to the visualization
         .attr("class", "node")
         .each(function(d) { d.node = this; })
         .on("mouseover", function(d) {
-            tooltip.transition()
-                .duration(200)
-                .style("opacity", 0.9);
-
-            // the content to be displayed in the tooltip
-            tooltip.html("District: " + d.data.District + "<br/>School: " + d.data.School + "<br/>Graduation Rate (FRPL): " +
-                d.data.FRPLGradRate.toFixed(2) + "%<br/>Graduates that took AP/IB/Cambridge Courses: "
+            var caption = document.getElementById("caption").innerHTML = "School: " + d.data.School +
+                "<br/>District: " + d.data.District + "<br/>Graduation Rate (FRPL): "
+                + d.data.FRPLGradRate.toFixed(2) + "%<br/>Graduates that took AP/IB Courses: "
                 + d.data.RigorousCourses.toFixed(2) + "%<br/>Black/African American: "
                 + d.data.AfricanAmerican.toFixed(2) + "%<br/>Hispanic/Latino: "
-                + d.data.AfricanAmerican.toFixed(2) + "%")
-                .style("left", (d3.event.pageX + 5) + "px")
-                .style("top", (d3.event.pageY - 28) + "px");
+                + d.data.Latino.toFixed(2) + "%";
 
             d3.selectAll(d.ancestors().map(function(d) { return d.node; }))
                 .classed("node--hover", true)
                 .select("rect");
+
+            // highlight the appropriate node on the scatterplot
+            d3.selectAll("circle")
+                .select( function(scatterD) { return scatterD.School == d.data.School?this:null; })
+                .attr("r", 11)
+                .style("opacity", 1);
         })
         .on("mouseout", function(d) {
-            tooltip.transition()
-                .duration(500)
-                .style("opacity", 0);
+            var caption = document.getElementById("caption").innerHTML = "";
 
             d3.selectAll(d.ancestors().map(function(d) { return d.node; }))
                 .classed("node--hover", false);
+
+            // unhighlight the appropriate node on the scatterplot
+            d3.selectAll("circle")
+                .select( function(scatterD) { return scatterD.School == d.data.School?this:null; })
+                .attr("r", 5)
+                .style("opacity", opacity);
         });
 
     // create a rectangle sized appropriately based on grad rate
@@ -332,7 +405,14 @@ function drawTree(root) { // add the treemap to the visualization
         .attr("id", function(d) { return "rect-" + d.id; })
         .attr("width", function(d) { return d.x1 - d.x0; })
         .attr("height", function(d) { return d.y1 - d.y0; })
-        .style("fill", function(d) { return col(d.data.District); });
+        .style("fill", function(d) { return col(d.data.District); })
+        .style("opacity", opacity)
+        .on("mouseover", function(d) {
+            d3.select(this).style("opacity", 1);
+        })
+        .on("mouseout", function(d) {
+            d3.select(this).style("opacity", opacity);
+        });
 
 
     // append the text to be shown on each node
@@ -351,6 +431,176 @@ function drawTree(root) { // add the treemap to the visualization
         .text(function(d) { return d; });
 }
 
+/*
+    console.log(root);
+
+    var cell = tree.selectAll(".node")
+        .data(root.leaves());
+
+     // update nodes as needed
+     cell.attr("transform", function(d) { return "translate(" + d.x0 + "," + d.y0 + ")"; })
+     .attr("width", function(d) { return d.x1 - d.x0; })
+     .attr("height", function(d) { return d.y1 - d.y0; });
+
+     rectangles
+     .attr("width", function(d) { return d.x1 - d.x0; })
+     .attr("height", function(d) { return d.y1 - d.y0; })
+     .style("fill", function(d) { return col(d.data.District); })
+     .style("opacity", opacity);
+
+     cell.exit().remove();
+     rectangles.exit().remove();
+
+     cell.enter().append("g")
+     .attr("transform", function(d) { return "translate(" + d.x0 + "," + d.y0 + ")"; })
+     .attr("class", "node")
+     .each(function(d) { d.node = this; })
+     .on("mouseover", function(d) {
+     var caption = document.getElementById("caption").innerHTML = "School: " + d.data.School +
+     "<br/>District: " + d.data.District + "<br/>Graduation Rate (FRPL): "
+     + d.data.FRPLGradRate.toFixed(2) + "%<br/>Graduates that took AP/IB Courses: "
+     + d.data.RigorousCourses.toFixed(2) + "%<br/>Black/African American: "
+     + d.data.AfricanAmerican.toFixed(2) + "%<br/>Hispanic/Latino: "
+     + d.data.Latino.toFixed(2) + "%";
+
+     d3.selectAll(d.ancestors().map(function(d) { return d.node; }))
+     .classed("node--hover", true)
+     .select("rect");
+
+     // highlight the appropriate node on the scatterplot
+     d3.selectAll("circle")
+     .select( function(scatterD) { return scatterD.School == d.data.School?this:null; })
+     .attr("r", 11)
+     .style("opacity", 1);
+     })
+     .on("mouseout", function(d) {
+     var caption = document.getElementById("caption").innerHTML = "";
+
+     d3.selectAll(d.ancestors().map(function(d) { return d.node; }))
+     .classed("node--hover", false);
+
+     // unhighlight the appropriate node on the scatterplot
+     d3.selectAll("circle")
+     .select( function(scatterD) { return scatterD.School == d.data.School?this:null; })
+     .attr("r", 5)
+     .style("opacity", opacity);
+     });
+
+     // create a rectangle sized appropriately based on grad rate
+     cell.append("rect")
+     .attr("id", function(d) { return "rect-" + d.id; })
+     .attr("width", function(d) { return d.x1 - d.x0; })
+     .attr("height", function(d) { return d.y1 - d.y0; })
+     .style("fill", function(d) { return col(d.data.District); })
+     .style("opacity", opacity)
+     .on("mouseover", function(d) {
+     d3.select(this).style("opacity", 1);
+     })
+     .on("mouseout", function(d) {
+     d3.select(this).style("opacity", opacity);
+     });
+
+
+     // append the text to be shown on each node
+     var label = cell.append("text")
+     .attr("clip-path", function(d) { return "url(#clip-" + d.id + ")"; });
+
+     // format the text for all child nodes (schools)
+     label
+     .filter(function(d) { return !d.children; })
+     .selectAll("tspan")
+     .data(function(d) { return d.id.substring(d.id.lastIndexOf(".") + 1)
+     .split(/(?=[A-Z][^A-Z])/g); })
+     .enter().append("tspan")
+     .attr("x", 4)
+     .attr("y", function(d, i) { return 13 + i * 10; })
+     .text(function(d) { return d; });
+**/
+
+    /*
+    // data bind
+    var node = tree
+        .selectAll(".node")
+        .data(root.leaves());
+
+    node
+        .selectAll("rect")
+        .data(root.leaves());
+
+    node
+        .selectAll("text")
+        .data(root.leaves());
+
+    // enter
+    var newNode = node.enter()
+        .append("g")
+        .attr("transform", function(d) { return "translate(" + d.x0 + "," + d.y0 + ")"; })
+        .attr("class", "node")
+        .each(function(d) { d.node = this; })
+        .on("mouseover", function(d) {
+            var caption = document.getElementById("caption").innerHTML = "School: " + d.data.School +
+                "<br/>District: " + d.data.District + "<br/>Graduation Rate (FRPL): "
+                + d.data.FRPLGradRate.toFixed(2) + "%<br/>Graduates that took AP/IB Courses: "
+                + d.data.RigorousCourses.toFixed(2) + "%<br/>Black/African American: "
+                + d.data.AfricanAmerican.toFixed(2) + "%<br/>Hispanic/Latino: "
+                + d.data.Latino.toFixed(2) + "%";
+
+            d3.selectAll(d.ancestors().map(function(d) { return d.node; }))
+                .classed("node--hover", true)
+                .select("rect");
+
+            // highlight the appropriate node on the scatterplot
+            d3.selectAll("circle")
+                .select( function(scatterD) { return scatterD.School == d.data.School?this:null; })
+                .attr("r", 11)
+                .style("opacity", 1);
+        })
+        .on("mouseout", function(d) {
+            var caption = document.getElementById("caption").innerHTML = "";
+
+            d3.selectAll(d.ancestors().map(function(d) { return d.node; }))
+                .classed("node--hover", false);
+
+            // unhighlight the appropriate node on the scatterplot
+            d3.selectAll("circle")
+                .select( function(scatterD) { return scatterD.School == d.data.School?this:null; })
+                .attr("r", 5)
+                .style("opacity", opacity);
+        });
+
+    newNode.append("rect");
+    newNode.append("text");
+
+    // update
+    tree.selectAll(".node g")
+        .attr("transform", function(d) { return "translate(" + d.x0 + "," + d.y0 + ")"; });
+
+    tree
+        .selectAll(".node rect")
+        .attr("id", function(d) { return "rect-" + d.id; })
+        .attr("width", function(d) { return d.x1 - d.x0; })
+        .attr("height", function(d) { return d.y1 - d.y0; })
+        .style("fill", function(d) { return col(d.data.District); })
+        .style("opacity", opacity)
+        .on("mouseover", function(d) {
+            d3.select(this).style("opacity", 1);
+        })
+        .on("mouseout", function(d) {
+            d3.select(this).style("opacity", opacity);
+        });
+
+    tree
+        .selectAll(".node text")
+        .attr("clip-path", function(d) { return "url(#clip-" + d.id + ")"; })
+        .selectAll("tspan")
+        .data(function(d) { return d.id.substring(d.id.lastIndexOf(".") + 1)
+            .split(/(?=[A-Z][^A-Z])/g); })
+        .enter().append("tspan")
+        .attr("x", 4)
+        .attr("y", function(d, i) { return 13 + i * 10; })
+        .text(function(d) { return d; });
+        */
+
 
 // show the tooltip when hovering over a rectangle
 function hovered(hover) {
@@ -360,28 +610,5 @@ function hovered(hover) {
             .select("rect")
             .attr("width", function(d) { return d.x1 - d.x0 - hover; })
             .attr("height", function(d) { return d.y1 - d.y0 - hover; });
-    };
-
-
-// hard coding graduation rates for districts and the entire dataset to ensure
-// tree map is shaped correctly - otherwise treemap includes gaps in the squares
-// to account for the graduation rate of parent nodes
-function getGradRate(d) {
-    if (d.id == "Highline Public Schools") {
-        return 0.5622 * 100;
-    } else if (d.id == "Auburn School District") {
-        return 0.6722 * 100;
-    } else if (d.id == "Kent School District") {
-        return 0.6884 * 100;
-    } else if (d.id == "Federal Way Public Schools") {
-        return 0.6745 * 100;
-    } else if (d.id == "Seattle Public Schools") {
-        return 0.6487 * 100;
-    } else if (d.id == "Renton School District") {
-        return 0.6983 * 100;
-    } else if (d.id == "Tukwila School District") {
-        return 0.5116 * 100;
-    } else {
-        return 0.6490 * 100;
     }
-}}
+}

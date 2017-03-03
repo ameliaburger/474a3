@@ -11,13 +11,13 @@
     height: 50px;
     font-size: 18px;
     float: right;
-    border-bottom: none;
+    border: none;
 }
 
 #controls {
     width: 276px;
     float: right;
-    border-top: none;
+    border: none;
 }
 
 #visualization {
@@ -32,8 +32,10 @@
 /* other style rules */
 
 #caption {
+    padding-left: 10px;
+    padding-right: 10px;
     text-align: left;
-    font-size: 10px;
+    font-size: 12px;
 }
 
 div {
