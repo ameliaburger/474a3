@@ -80,14 +80,15 @@ scatterplot.append("text")
 
 // VARIABLES - TREEMAP
 
-var treechart = d3.select(".tree")
+var treemap = d3.select(".tree")
     .attr("width", w + margin.left + margin.right)
     .attr("height", h + margin.top + margin.bottom + 15)
     .append("g");
 
-var treemap = d3.treemap()
+var map = d3.treemap()
     .size([width, height])
     .paddingInner(1)
+    .tile(d3.treemapResquarify)
     .round(true);
 
 
@@ -140,7 +141,7 @@ d3.csv("treemap.csv", function(error, schools) { // load the data set
         .sum(function(d) { return d.FRPLGradRate; })
         .sort(function(a, b) { return b.height - a.height || b.FRPLGradRate - a.FRPLGradRate; })
     ;
-    treemap(root);
+    map(root);
 
     drawTree(root);
 });
@@ -226,7 +227,7 @@ function filterDistrict(mydistrict) {
             .sum(function(d) { return d.FRPLGradRate; })
             .sort(function(a, b) { return b.height - a.height || b.FRPLGradRate - a.FRPLGradRate; })
         ;
-        treemap(root);
+        map(root);
 
         drawTree(root)
     }else{
@@ -269,7 +270,7 @@ function filterDistrict(mydistrict) {
             .sum(function(d) { return d.FRPLGradRate; })
             .sort(function(a, b) { return b.height - a.height || b.FRPLGradRate - a.FRPLGradRate; })
         ;
-        treemap(root);
+        map(root);
 
         //clear(root);
         drawTree(root)
@@ -280,7 +281,7 @@ function clear(root) {
 
     console.log(root.leaves());
 
-    var node = treechart
+    var node = treemap// treemap is the g element, which is the parent node
         .selectAll(".node")
         .data(root.leaves());
 
@@ -300,28 +301,6 @@ function clear(root) {
     node.selectAll("rect").exit().remove();
     node.selectAll("text").exit().remove();
     node.selectAll("g").exit().remove();
-
-    //node.selectAll("g").exit.remove();
-    //node.("rect").exit().remove();
-    //node.selectAll("text").exit().remove();
-
-    /*
-    node
-        .selectAll("rect")
-        .data("");
-
-    node
-        .selectAll("text")
-        .data("");
-        */
-
-    //node.exit().remove();
-    //node.selectAll("rect").exit().remove();
-    //node.selectAll("text").exit().remove();
-    //node.selectAll("tspan").exit().remove();
-    //newNode.exit().remove();
-    //newNode.selectAll("rect").exit().remove();
-    //newNode.selectAll("text").exit().remove();
 
 }
 
@@ -390,148 +369,12 @@ function isInRange(datum) {
 
 
 
-
 // FUNCTIONS - TREEMAP
 function drawTree(root) { // add the treemap to the visualization
 
-
-    /*
-    var circle = scatterplot.selectAll("circle")
-        .data(data);
-
-    // update circles as needed
-    circle
-        .attr("cx", function(d) { return x(d.RigorousCourses);  })
-        .attr("cy", function(d) { return y(d.FRPLGradRate);  })
-        .style("fill", function(d) { return col(d.District); });
-
-    circle.exit().remove();
-
-     // adding circles, setting their properties, including tooltip
-     circle.enter().append("circle")
-     .attr("cx", function(d) { return x(d.RigorousCourses);  })
-     .attr("cy", function(d) { return y(d.FRPLGradRate);  })
-    */
-
-    // create a cell for each individual node in the tree
-/*
-    console.log(root.leaves());
-
-
-    var cell = tree
-        .selectAll(".node")
-        .data(root.leaves());
-
-    cell.attr("transform", function(d) { return "translate(" + d.x0 + "," + d.y0 + ")"; });
-
-    cell.selectAll(".node rect")
-        .attr("width", function(d) { return d.x1 - d.x0; })
-        .attr("height", function(d) { return d.y1 - d.y0; })
-        .style("fill", function(d) { return col(d.data.District); })
-        .style("opacity", opacity);
-
-    cell.selectAll(".node text tspan")
-        .attr("x", 4)
-        .attr("y", function(d, i) { return 13 + i * 10; })
-        .text(function(d) { return d; });
-
-    cell.exit().remove();
-
-    cell.enter().append("g")
-        .attr("transform", function(d) { return "translate(" + d.x0 + "," + d.y0 + ")"; })
-        .attr("class", "node")
-        .each(function(d) { d.node = this; })
-        .on("mouseover", function(d) {
-            var caption = document.getElementById("caption").innerHTML = "School: " + d.data.School +
-                "<br/>District: " + d.data.District + "<br/>Graduation Rate (FRPL): "
-                + d.data.FRPLGradRate.toFixed(2) + "%<br/>Graduates that took AP/IB Courses: "
-                + d.data.RigorousCourses.toFixed(2) + "%<br/>Black/African American: "
-                + d.data.AfricanAmerican.toFixed(2) + "%<br/>Hispanic/Latino: "
-                + d.data.Latino.toFixed(2) + "%";
-
-            d3.selectAll(d.ancestors().map(function(d) { return d.node; }))
-                .classed("node--hover", true)
-                .select("rect");
-
-            // highlight the appropriate node on the scatterplot
-            d3.selectAll("circle")
-                .select( function(scatterD) { return scatterD.School == d.data.School?this:null; })
-                .attr("r", 11)
-                .style("opacity", 1);
-        })
-        .on("mouseout", function(d) {
-            var caption = document.getElementById("caption").innerHTML = "";
-
-            d3.selectAll(d.ancestors().map(function(d) { return d.node; }))
-                .classed("node--hover", false);
-
-            // unhighlight the appropriate node on the scatterplot
-            d3.selectAll("circle")
-                .select( function(scatterD) { return scatterD.School == d.data.School?this:null; })
-                .attr("r", 5)
-                .style("opacity", opacity);
-        });
-
-    // create a rectangle sized appropriately based on grad rate
-    cell.append("rect")
-        .attr("id", function(d) { return "rect-" + d.id; })
-        .attr("width", function(d) { return d.x1 - d.x0; })
-        .attr("height", function(d) { return d.y1 - d.y0; })
-        .style("fill", function(d) { return col(d.data.District); })
-        .style("opacity", opacity)
-        .on("mouseover", function(d) {
-            d3.select(this).style("opacity", 1);
-        })
-        .on("mouseout", function(d) {
-            d3.select(this).style("opacity", opacity);
-        });
-
-
-    // append the text to be shown on each node
-    var label = cell.append("text")
-        .attr("clip-path", function(d) { return "url(#clip-" + d.id + ")"; });
-
-    // format the text for all child nodes (schools)
-    label
-        .filter(function(d) { return !d.children; })
-        .selectAll("tspan")
-        .data(function(d) { return d.id.substring(d.id.lastIndexOf(".") + 1)
-            .split(/(?=[A-Z][^A-Z])/g); })
-        .enter().append("tspan")
-        .attr("x", 4)
-        .attr("y", function(d, i) { return 13 + i * 10; })
-        .text(function(d) { return d; });
-        */
-
-/*
-    console.log(root);
-
-    var cell = tree.selectAll(".node")
-        .data(root.leaves());
-
-     // update nodes as needed
-     cell.attr("transform", function(d) { return "translate(" + d.x0 + "," + d.y0 + ")"; })
-     .attr("width", function(d) { return d.x1 - d.x0; })
-     .attr("height", function(d) { return d.y1 - d.y0; });
-
-     rectangles
-     .attr("width", function(d) { return d.x1 - d.x0; })
-     .attr("height", function(d) { return d.y1 - d.y0; })
-     .style("fill", function(d) { return col(d.data.District); })
-     .style("opacity", opacity);
-
-     cell.exit().remove();
-     rectangles.exit().remove();
-**/
-
-    //console.log(root.leaves());
-    console.log(root.leaves());
-
-
     // data bind
-
-    var node = treechart
-        .selectAll(".node")
+    var node = treemap
+        .selectAll("g")
         .data(root.leaves());
 
     node
@@ -542,15 +385,10 @@ function drawTree(root) { // add the treemap to the visualization
         .selectAll("text")
         .data(root.leaves());
 
-    node
-        .selectAll("g")
-        .data(root.leaves());
+    //var rectangles = document.getElementsByClassName("node");
+    //console.log(rectangles);
 
-    node.exit().remove();
-    node.selectAll("rect").exit().remove();
-    node.selectAll("text").exit().remove();
-    node.selectAll("g").exit().remove();
-
+    console.log(root.leaves());
 
     // enter
     var newNode = node.enter()
@@ -593,10 +431,10 @@ function drawTree(root) { // add the treemap to the visualization
     newNode.append("text");
 
     // update
-    treechart.selectAll(".node g")
+    treemap.selectAll(".node g")
         .attr("transform", function(d) { return "translate(" + d.x0 + "," + d.y0 + ")"; });
 
-    treechart
+    treemap
         .selectAll(".node rect")
         .attr("id", function(d) { return "rect-" + d.id; })
         .attr("width", function(d) { return d.x1 - d.x0; })
@@ -610,7 +448,8 @@ function drawTree(root) { // add the treemap to the visualization
             d3.select(this).style("opacity", opacity);
         });
 
-    treechart
+
+    treemap
         .selectAll(".node text")
         .attr("clip-path", function(d) { return "url(#clip-" + d.id + ")"; })
         .selectAll("tspan")
@@ -620,6 +459,11 @@ function drawTree(root) { // add the treemap to the visualization
         .attr("x", 4)
         .attr("y", function(d, i) { return 13 + i * 10; })
         .text(function(d) { return d; });
+
+    // exit
+    node.selectAll("rect").exit().remove();
+    node.selectAll("g").exit().remove();
+    node.exit().remove();
 }
 
 
