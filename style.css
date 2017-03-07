@@ -1,13 +1,13 @@
 /* sizing for the entire layout, the title, the visualization and the control sidebar */
 #layout {
-    width: 1150px;
+    width: 1180px;
     height: 680px;
     border: none;
 }
 
 #title {
     text-align: center;
-    width: 276px;
+    width: 250px;
     height: 50px;
     font-size: 18px;
     float: right;
@@ -15,13 +15,13 @@
 }
 
 #controls {
-    width: 276px;
+    width: 250px;
     float: right;
     border: none;
 }
 
 #visualization {
-    width: 870px;
+    width: 900px;
     height:600px;
     float: left;
     text-align: center;
@@ -99,7 +99,6 @@ a {
 
 text {
     font-color: black;
-    font-size: 9px;
 }
 
 .node--hover rect {

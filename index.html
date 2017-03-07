@@ -34,22 +34,26 @@
     </div>
     <div id="controls">
         <!--label for the school district checkboxes-->
-        <br/>
         <label class="label">School Districts:</label>
         <input type="text" id="mytype" readonly style="border:0; color:#f6931f; font-weight:bold;">
         <br>
 
-        <!--the school district dropdown-->
-        <select id="myselectform" onchange="filterDistrict(this.value)">
-            <option value="All">All</option>
-            <option value="Seattle Public Schools">Seattle Public Schools</option>
-            <option value="Highline Public Schools">Highline Public Schools</option>
-            <option value="Tukwila School District">Tukwila School District</option>
-            <option value="Renton School District">Renton School District</option>
-            <option value="Kent School District">Kent School District</option>
-            <option value="Federal Way Public Schools">Federal Way Public Schools</option>
-            <option value="Auburn School District">Auburn School District</option>
-        </select>
+        <!--the school district check boxes-->
+        <label><input id="All" type='checkbox' value="All" checked onchange='filterDistrict(this.value)'>All</label><br>
+        <label><input id="Seattle Public Schools" type='checkbox' value="Seattle Public Schools"
+                      onchange='filterDistrict(this.value)'>Seattle Public Schools</label><br/>
+        <label><input id="Highline Public Schools" type='checkbox' value="Highline Public Schools"
+                      onchange='filterDistrict(this.value)'>Highline Public Schools</label><br/>
+        <label><input id="Tukwila School District" type='checkbox' value="Tukwila School District"
+                      onchange='filterDistrict(this.value)'>Tukwila School District</label><br/>
+        <label><input id="Renton School District" type='checkbox' value="Renton School District"
+                      onchange='filterDistrict(this.value)'>Renton School District</label><br/>
+        <label><input id="Kent School District" type='checkbox' value="Kent School District"
+                      onchange='filterDistrict(this.value)'>Kent School District</label><br/>
+        <label><input id="Federal Way Public Schools" type='checkbox' value="Federal Way Public Schools"
+                      onchange='filterDistrict(this.value)'>Federal Way Public Schools</label><br/>
+        <label><input id="Auburn School District" type='checkbox' value="Auburn School District"
+                      onchange='filterDistrict(this.value)'>Auburn School District</label><br/>
 
         <!--sliders-->
         <br/>
@@ -69,13 +73,9 @@
 
         <!--caption-->
         <p class="caption">
-            This scatterplot visualizes how the graduation rate of high school seniors in Seattle and South King County who are
-            on Free or Reduced Price Lunch (FRPL), which is an indicator of whether a student is low income, is influenced by
-            the percentage of graduating seniors who took rigorous courses such AP, IB, or Cambridge courses. By mousing
-            over a data point, you can see the school name, school district, and demographic information.
+            Update
         </p>
 
-        <br/>
         <p id="caption" class="caption"></p>
 
         <br/><br/>
