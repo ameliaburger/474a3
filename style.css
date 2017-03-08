@@ -21,7 +21,7 @@
 }
 
 #visualization {
-    width: 900px;
+    width: 925px;
     height:600px;
     float: left;
     text-align: center;
@@ -50,32 +50,14 @@ div {
     padding-left: 10px;
 }
 
-
 #title, #controls, #treemapControls {
     font-family: 'Raleway', sans-serif;
-    text-align: center;
 }
 
-#treemapVisualization {
-    width: 800px;
-    float: left;
-    border-top: 0;
-    text-align: center;
-    border-right: 0px;
-}
-
-#treemapControls {
-    width: 276px;
-    height:900px;
-    float: right;
-    border-top: 0px;
-}
-
-#innerControls {
-    padding-left: 10px;
-    padding-right: 10px;
-    font-size: 10px;
-    text-align: left;
+span {
+    padding-top: 2px;
+    padding-bottom: 2px;
+    color: white;
 }
 
 .tooltip {
@@ -87,20 +69,9 @@ div {
 
 .sliderlabel {
     font-size: 10px;
+    padding-left: 15px;
 }
 
 .label {
     font-weight: bold;
-}
-
-a {
-    font-size: 14px;
-}
-
-text {
-    font-color: black;
-}
-
-.node--hover rect {
-    stroke: #000;
 }

@@ -39,24 +39,31 @@
         <br>
 
         <!--the school district check boxes-->
-        <label><input id="All" type='checkbox' value="All" checked onchange='filterDistrict(this.value)'>All</label><br>
-        <label><input id="Seattle Public Schools" type='checkbox' value="Seattle Public Schools"
-                      onchange='filterDistrict(this.value)'>Seattle Public Schools</label><br/>
-        <label><input id="Highline Public Schools" type='checkbox' value="Highline Public Schools"
-                      onchange='filterDistrict(this.value)'>Highline Public Schools</label><br/>
-        <label><input id="Tukwila School District" type='checkbox' value="Tukwila School District"
-                      onchange='filterDistrict(this.value)'>Tukwila School District</label><br/>
-        <label><input id="Renton School District" type='checkbox' value="Renton School District"
-                      onchange='filterDistrict(this.value)'>Renton School District</label><br/>
-        <label><input id="Kent School District" type='checkbox' value="Kent School District"
-                      onchange='filterDistrict(this.value)'>Kent School District</label><br/>
-        <label><input id="Federal Way Public Schools" type='checkbox' value="Federal Way Public Schools"
-                      onchange='filterDistrict(this.value)'>Federal Way Public Schools</label><br/>
+        <label><input id="All" type='checkbox' value="All" checked onchange='filterDistrict(this.value)'> All</label><br>
         <label><input id="Auburn School District" type='checkbox' value="Auburn School District"
-                      onchange='filterDistrict(this.value)'>Auburn School District</label><br/>
+                      onchange='filterDistrict(this.value)'><span style="background-color: rgb(31, 119, 180)"> Auburn School District </span></label><br/>
+        <label><input id="Highline Public Schools" type='checkbox' value="Highline Public Schools"
+                      onchange='filterDistrict(this.value)'><span style="background-color: rgb(44, 160, 44)"> Highline Public Schools </span></label><br/>
+        <label><input id="Federal Way Public Schools" type='checkbox' value="Federal Way Public Schools"
+                      onchange='filterDistrict(this.value)'><span style="background-color: rgb(214, 39, 40)"> Federal Way Public Schools </span></label><br/>
+        <label><input id="Kent School District" type='checkbox' value="Kent School District"
+                      onchange='filterDistrict(this.value)'><span style="background-color: rgb(255, 127, 14)"> Kent School District </span></label><br/>
+        <label><input id="Renton School District" type='checkbox' value="Renton School District"
+                      onchange='filterDistrict(this.value)'><span style="background-color: rgb(227, 119, 194)"> Renton School District </span></label><br/>
+        <label><input id="Seattle Public Schools" type='checkbox' value="Seattle Public Schools"
+                      onchange='filterDistrict(this.value)'><span style="background-color: rgb(148, 103, 189)"> Seattle Public Schools </span></label><br/>
+        <label><input id="Tukwila School District" type='checkbox' value="Tukwila School District"
+                      onchange='filterDistrict(this.value)'><span style="background-color: rgb(140, 86, 75)"> Tukwila School District </span></label><br/>
+
+        <!--radio buttons-->
+        <br/><br/><label class="label">Size Treemap by:</label>
+        <form>
+            <input type="radio" id="PercentFRPL" onchange='reSize(this.value)' value="PercentFRPL" checked>Percent FRPL<br>
+            <input type="radio" id="Total" onchange='reSize(this.value)' value="Total">Total Students <br>
+            <input type="radio" id="FRPLGradRate" onchange='reSize(this.value)' value="FRPLGradRate">Graduation Rate (FRPL)
+        </form>
 
         <!--sliders-->
-        <br/>
         <br/>
         <label class="label">Percent Black/African American</label>
         <div id="AfricanAmerican" class="slider-range"></div>
@@ -70,11 +77,6 @@
         <label class="sliderlabel" for="latinopercent">Percent range:</label>
         <input type="text" id="latinopercent" readonly style="border:0; color:#f6931f; font-weight:bold;">
 
-
-        <!--caption-->
-        <p class="caption">
-            Update
-        </p>
 
         <p id="caption" class="caption"></p>
 

@@ -94,16 +94,18 @@ var treemap = d3.select(".tree")
     .attr("transform", "translate(" + margin.left + ",0)");
 
 var map = d3.treemap()
-    .size([width, height])
+    .size([w, height])
     .paddingInner(1)
     .tile(d3.treemapResquarify)
     .round(true);
+
+var currSizing = "PercentFRPL";
 
 
 
 
 // LOAD DATASET
-d3.csv("treemap.csv", function(error, schools) {
+d3.csv("school_dataset.csv", function(error, schools) {
     //read in the data
     if (error) return console.warn(error);
     schools.forEach(function(d) {
@@ -111,13 +113,13 @@ d3.csv("treemap.csv", function(error, schools) {
         d.AfricanAmerican = d.AfricanAmerican * 100;
         d.Latino = d.Latino * 100;
         d.ELL = +d.ELL * 100;
+        d.Seniors = +d.Seniors;
         d.RigorousCourses = d.RigorousCourses * 100;
         d.GradRate = d.GradRate * 100;
         d.FRPLGradRate = d.FRPLGradRate * 100;
     });
     //dataset is the full dataset -- maintain a copy of this at all times
     dataset = schools;
-
 
     // SCATTERPLOT:
     // filter scatterData so that only the individual schools are included
@@ -133,7 +135,7 @@ d3.csv("treemap.csv", function(error, schools) {
 
 
     // TREEMAP:
-    var root = prepTree(dataset); // size nodes appropriately and generate the treemap
+    var root = prepTree(dataset, currSizing); // size nodes appropriately and generate the treemap
     drawTree(root);
 });
 
@@ -168,9 +170,6 @@ function drawScatterplot(data) { //draw the circiles initially and on each inter
                 .style("opacity", 1);
 
             // highlight the appropriate rectangle on the scatterplot
-            d3.selectAll(".node")
-                .select( function(treeD) { return treeD.data.School == d.School?this:null; })
-                .classed("node--hover", true);
             d3.selectAll("rect")
                 .select( function(treeD) { return treeD.data.School == d.School?this:null; })
                 .style("opacity", 1);
@@ -182,9 +181,6 @@ function drawScatterplot(data) { //draw the circiles initially and on each inter
                 .style("opacity", opacity);
 
             // unhighlight the appropriate rectangle on the scatterplot
-            d3.selectAll(".node")
-                .select( function(treeD) { return treeD.data.School == d.School?this:null; })
-                .classed("node--hover", false);
             d3.selectAll("rect")
                 .select( function(treeD) { return treeD.data.School == d.School?this:null; })
                 .style("opacity", opacity);
@@ -214,10 +210,7 @@ function drawTree(root) { // add the treemap to the visualization
         .on("mouseover", function(d) {
             var caption = getCaption(d, "tree");
 
-            // highlight this node
-            d3.selectAll(d.ancestors().map(function(d) { return d.node; }))
-                .classed("node--hover", true)
-                .select("rect");
+            // highlight this node\
             d3.select(this).style("opacity", 1);
 
             // highlight the appropriate point on the scatterplot
@@ -230,8 +223,6 @@ function drawTree(root) { // add the treemap to the visualization
             var caption = document.getElementById("caption").innerHTML = "";
 
             // unhighlight this node
-            d3.selectAll(d.ancestors().map(function(d) { return d.node; }))
-                .classed("node--hover", false);
             d3.select(this).style("opacity", opacity);
 
             // unhighlight the appropriate point on the scatterplot
@@ -255,7 +246,6 @@ function drawTree(root) { // add the treemap to the visualization
     node.exit().remove();
 
 }
-
 
 
 
@@ -291,9 +281,7 @@ function filterDistrict(mydistrict) {
         //TREEMAP
         nTree = dataset.filter(function(d) { return isInRange(d)});
 
-        console.log(nTree);
-
-        var root = prepTree(nTree);
+        var root = prepTree(nTree, currSizing);
         drawTree(root);
 
 
@@ -329,7 +317,7 @@ function filterDistrict(mydistrict) {
         nTree = filterOnCurrDistricts(dataset, "tree");
         nTree = nTree.filter(function(d) { return isInRange(d) });
 
-        var root = prepTree(nTree);
+        var root = prepTree(nTree, currSizing);
         drawTree(root);
     }
 }
@@ -419,11 +407,7 @@ function filterOnSliders(attr, values) {
     var nTree = dataset.filter(function(d) { return isInRange(d) });
     nTree = filterOnCurrDistricts(nTree, "tree");
 
-    console.log(nTree);
-
-    var root = prepTree(nTree);
-
-    console.log(root);
+    var root = prepTree(nTree, currSizing);
 
     drawTree(root);
 }
@@ -468,27 +452,67 @@ function getCaption(d, type) {
         AfricanAmerican = d.data.AfricanAmerican;
         Latino = d.data.Latino;
     }
-    return document.getElementById("caption").innerHTML = "<strong>School:</strong> " + school +
-        "<br/><strong>District:</strong> " + district + "<br/><strong>Graduation Rate (FRPL):</strong> "
+    return document.getElementById("caption").innerHTML = "<strong>" + school + "<br>Graduation Rate (FRPL):</strong> "
         + FRPLGradRate.toFixed(2) + "%<br/><strong>Graduates that took AP/IB courses:</strong> "
         + Rigorous.toFixed(2) + "<strong>%<br/>Black/African American:</strong> "
         + AfricanAmerican.toFixed(2) + "<strong>%<br/>Hispanic/Latino:</strong> "
         + Latino.toFixed(2) + "<strong>%</strong>";
 }
 
+// resize the boxes displayed in the treemap
+function reSize(type) {
+    // check and uncheck appropriate radio buttons
+
+    if (type == "PercentFRPL") {
+        currSizing = "PercentFRPL";
+        document.getElementById("FRPLGradRate").checked = false;
+        document.getElementById("PercentFRPL").checked = true;
+        document.getElementById("Total").checked = false;
+
+    } else if (type == "Total") {
+        currSizing = "Total";
+        document.getElementById("FRPLGradRate").checked = false;
+        document.getElementById("PercentFRPL").checked = false;
+        document.getElementById("Total").checked = true;
+    } else {
+        currSizing = "FRPLGradRate";
+        document.getElementById("FRPLGradRate").checked = true;
+        document.getElementById("PercentFRPL").checked = false;
+        document.getElementById("Total").checked = false;
+    }
+
+    // filter the data and redraw the tree
+    var nTree = dataset;
+    nTree = filterOnCurrDistricts(dataset, "tree");
+    nTree = nTree.filter(function(d) { return isInRange(d) });
+
+    var root = prepTree(nTree, type);
+    drawTree(root);
+}
+
 
 // put the data into a hierarchical format to be passed to the drawTree function
-function prepTree(data) {
+function prepTree(data, type) {
     var root = stratify(data); // change the data to a hierarchical format
 
-    // size the nodes based on the grad rate of seniors on Free/Reduced Price Lunch
-    root
-        .sum(function(d) { return d.FRPLGradRate; })
-        .sort(function(a, b) { return b.height - a.height || b.FRPLGradRate - a.FRPLGradRate; })
-    ;
+    if (type == "FRPLGradRate") {
+        // size the nodes based on the grad rate of seniors on Free/Reduced Price Lunch
+        root
+            .sum(function(d) { return d.FRPLGradRate; })
+            .sort(function(a, b) { return b.height - a.height || b.FRPLGradRate - a.FRPLGradRate; })
+        ;
+    } else if (type == "PercentFRPL") {
+        // size the nodes based on the percentage of students in the school who are on Free/Reduced Price Lunch
+        root
+            .sum(function(d) { return d.FRPL; })
+            .sort(function(a, b) { return b.height - a.height || b.FRPL - a.FRPL; });
+    } else { // type == Seniors
+        root
+            .sum(function(d) { return d.Seniors; })
+            .sort(function(a, b) { return b.height - a.height || b.Seniors - a.Seniors; });
+    }
 
     // create the treemap
     map(root);
-
     return root;
 }
