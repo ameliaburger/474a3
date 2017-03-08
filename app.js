@@ -496,7 +496,7 @@ function getCaption(d, type) {
         + AfricanAmerican.toFixed(2) + "%<i><br/>Percent Hispanic/Latino:</i> "
         + Latino.toFixed(2) + "%");
     } else { // caption when sized by total seniors in the school
-        return ("<strong>" + school + "</strong><br>Low income students had a graduation rate of " + FRPL.toFixed(d) + "%" +
+        return ("<strong>" + school + "</strong><br>Low income students had a graduation rate of " + FRPLGradRate.toFixed(d) + "%" +
         "<br/> and there were "
         + seniors + " total seniors (all incomes).<br/><br/><i>Percent of graduates that took AP/IB courses:</i> "
         + Rigorous.toFixed(2) + "%<i><br/>Percent Black/African American:</i> "
