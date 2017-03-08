@@ -56,11 +56,10 @@
                       onchange='filterDistrict(this.value)'><span style="background-color: rgb(140, 86, 75)"> Tukwila School District </span></label><br/>
 
         <!--radio buttons-->
-        <br/><br/><label class="label">Size Treemap by:</label>
+        <br/><label class="label">Size Treemap by:</label>
         <form>
-            <input type="radio" id="PercentFRPL" onchange='reSize(this.value)' value="PercentFRPL" checked>Percent FRPL<br>
-            <input type="radio" id="Total" onchange='reSize(this.value)' value="Total">Total Students <br>
-            <input type="radio" id="FRPLGradRate" onchange='reSize(this.value)' value="FRPLGradRate">Graduation Rate (FRPL)
+            <input type="radio" id="PercentFRPL" onchange='reSize(this.value)' value="PercentFRPL" checked>Percent Low Income<br>
+            <input type="radio" id="Total" onchange='reSize(this.value)' value="Total">Total Seniors<br>
         </form>
 
         <!--sliders-->
@@ -77,8 +76,17 @@
         <label class="sliderlabel" for="latinopercent">Percent range:</label>
         <input type="text" id="latinopercent" readonly style="border:0; color:#f6931f; font-weight:bold;">
 
-
-        <p id="caption" class="caption"></p>
+        <br/>
+        <p id="caption" class="caption">
+            This visualization explores how the graduation rates of low income high school seniors in Seattle and South King
+            County are influenced by the percentage of graduating seniors who took rigorous courses such AP or IB courses. A
+            student is determined to be low income if they are on Free/Reduced Price Lunch (FRPL).
+            <br/><br/>
+            Size the boxes of the treemap based on the percentage of the school's population that is low income or the total
+            number of students in the school to examine how these values may influence graduation rate. Filters for the percentage
+            of Black/African American students in each school and the percentage of Hispanic/Latino students in each school
+            are also available to examine racial impact.
+        </p>
 
         <br/><br/>
     </div>

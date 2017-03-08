@@ -24,6 +24,12 @@ var currDistricts = districts; // keep track of the current districts that are s
 var attributes = ["AfricanAmerican", "Latino"];
 var ranges = [[0, 100], [0, 100]];
 
+var tooltip = d3.select("body").append("div")
+    .attr("class", "tooltip")
+    .style("opacity", 0)
+    .style("left", 185 + "px")
+    .style("top", 30 + "px");;
+
 
 
 // VARIABLES - SCATTERPLOT
@@ -53,7 +59,7 @@ scatterplot.append("text")
     .attr("x", w)
     .attr("y", h - 6)
     .style("text-anchor", "end")
-    .text("Percent of Seniors Taking AP/IB/Cambridge Courses");
+    .text("Percent of Seniors Who Took AP/IB Courses");
 
 var y = d3.scaleLinear()
     .domain([0, 100])
@@ -70,10 +76,10 @@ scatterplot.append("g")
 scatterplot.append("text")
     .attr("transform", "rotate(-90)")
     .attr("y", 0 - margin.left)
-    .attr("x",0 - (height / 2))
+    .attr("x",0 - (height / 2) + 20)
     .attr("dy", "1em")
     .style("text-anchor", "middle")
-    .text("Graduation Rates");
+    .text("Graduation Rate of Low Income Seniors");
 
 
 
@@ -93,13 +99,13 @@ var treemap = d3.select(".tree")
     .append("g")
     .attr("transform", "translate(" + margin.left + ",0)");
 
-var map = d3.treemap()
+var map = d3.treemap() // describes the parameters of each treemap
     .size([w, height])
     .paddingInner(1)
     .tile(d3.treemapResquarify)
     .round(true);
 
-var currSizing = "PercentFRPL";
+var currSizing = "PercentFRPL"; // determines how the treemap boxes are sized
 
 
 
@@ -164,8 +170,18 @@ function drawScatterplot(data) { //draw the circiles initially and on each inter
         .style("stroke", "black")
         .style("opacity", opacity)
         .on("mouseover", function(d) {
-            var caption = getCaption(d, "scatter");
 
+            // show tooltip
+            var caption = getCaption(d, "scatter");
+            tooltip
+                .transition()
+                    .duration(200)
+                    .style("opacity", 0.9)
+
+            // the content to be displayed in the tooltip
+            tooltip.html(caption);
+
+            // highlight this circle
             d3.select(this).attr("r", 11)
                 .style("opacity", 1);
 
@@ -175,8 +191,13 @@ function drawScatterplot(data) { //draw the circiles initially and on each inter
                 .style("opacity", 1);
         })
         .on("mouseout", function(d) {
-            var caption = document.getElementById("caption").innerHTML = "";
 
+            // remove tooltip
+            tooltip.transition()
+                .duration(500)
+                .style("opacity", 0);
+
+            // unhighlight this circle
             d3.select(this).attr("r", 5)
                 .style("opacity", opacity);
 
@@ -208,9 +229,17 @@ function drawTree(root) { // add the treemap to the visualization
         .style("opacity", opacity)
         .each(function(d) { d.node = this; })
         .on("mouseover", function(d) {
-            var caption = getCaption(d, "tree");
 
-            // highlight this node\
+            // show tooltip
+            var caption = getCaption(d, "treemap");
+
+            tooltip.transition()
+                .duration(200)
+                .style("opacity", 0.9);
+
+            tooltip.html(caption);
+
+            // highlight this node
             d3.select(this).style("opacity", 1);
 
             // highlight the appropriate point on the scatterplot
@@ -220,7 +249,10 @@ function drawTree(root) { // add the treemap to the visualization
                 .style("opacity", 1);
         })
         .on("mouseout", function(d) {
-            var caption = document.getElementById("caption").innerHTML = "";
+            // remove tooltip
+            tooltip.transition()
+                .duration(500)
+                .style("opacity", 0);
 
             // unhighlight this node
             d3.select(this).style("opacity", opacity);
@@ -275,7 +307,7 @@ function filterDistrict(mydistrict) {
 
 
         //SCATTERPLOT
-        ndata = scatterData.filter(function(d) { return isInRange(d)});
+        ndata = scatterData.filter(function(d) { return isInRange(d)}); // filter based on the sliders
         drawScatterplot(ndata);
 
         //TREEMAP
@@ -326,7 +358,7 @@ function filterDistrict(mydistrict) {
 function filterOnCurrDistricts(data, type) {
     var newData = [];
 
-    if (type == "scatter") {
+    if (type == "scatter") { // need to filter two different ways for the scatterplot and treemap
         for (i = 0; i < currDistricts.length; i++) {
             if (currDistricts[i][1]) {
                 newData = newData.concat(data.filter(function(d) {
@@ -359,8 +391,8 @@ $(function() {
     $("#AfricanAmerican").slider({
         range: true,
         min: 0,
-        max: 60,
-        values: [ 0, 60 ],
+        max: 100,
+        values: [ 0, 100 ],
 
         slide: function(event, ui ) {
             $("#aframpercent").val(ui.values[0] + " - " + ui.values[1]); filterOnSliders("AfricanAmerican", ui.values);
@@ -376,8 +408,8 @@ $(function() {
     $("#Latino").slider({
         range: true,
         min: 0,
-        max: 60,
-        values: [ 0, 60 ],
+        max: 100,
+        values: [ 0, 100 ],
 
         slide: function(event, ui ) {
             $("#latinopercent").val(ui.values[0] + " - " + ui.values[1]); filterOnSliders("Latino", ui.values);
@@ -399,7 +431,7 @@ function filterOnSliders(attr, values) {
     var toVisualize = scatterData.filter(function(d) { return isInRange(d)});
     // filter on current checkbox selections
     if (!currDistricts[0][1]) {
-        toVisualize = filterOnCurrDistricts(toVisualize, "scatter");
+        toVisualize = filterOnCurrDistricts(toVisualize, "scatter"); // filter based on the school districts
     }
     drawScatterplot(toVisualize);
 
@@ -432,31 +464,45 @@ function isInRange(datum) {
 // generate the caption for a school
 function getCaption(d, type) {
     var school;
-    var district;
+    var FRPL;
+    var seniors;
     var FRPLGradRate;
     var Rigorous;
     var AfricanAmerican;
     var Latino;
-    if (type == "scatter") { // need two options because the scatterplot and treemap data are
+    if (type == "scatter") { // need two options because the scatterplot and treemap data are structured differently
         school = d.School;
-        district = d.District;
+        FRPL = d.FRPL;
+        seniors = d.Seniors;
         FRPLGradRate = d.FRPLGradRate;
         Rigorous = d.RigorousCourses;
         AfricanAmerican = d.AfricanAmerican;
         Latino = d.Latino;
     } else {
         school = d.data.School;
-        district = d.data.District;
+        FRPL = d.data.FRPL;
+        seniors = d.data.Seniors;
         FRPLGradRate = d.data.FRPLGradRate;
         Rigorous = d.data.RigorousCourses;
         AfricanAmerican = d.data.AfricanAmerican;
         Latino = d.data.Latino;
     }
-    return document.getElementById("caption").innerHTML = "<strong>" + school + "<br>Graduation Rate (FRPL):</strong> "
-        + FRPLGradRate.toFixed(2) + "%<br/><strong>Graduates that took AP/IB courses:</strong> "
-        + Rigorous.toFixed(2) + "<strong>%<br/>Black/African American:</strong> "
-        + AfricanAmerican.toFixed(2) + "<strong>%<br/>Hispanic/Latino:</strong> "
-        + Latino.toFixed(2) + "<strong>%</strong>";
+
+    if (currSizing == "PercentFRPL") { // caption when sized by percent FRPL
+        return ("<strong>" + school + "</strong><br>" + FRPL.toFixed(d) + "% of seniors are " +
+        "low income with a graduation  <br/> rate of "
+        + FRPLGradRate.toFixed(2) + "%.<br/><br/><i>Percent of graduates that took AP/IB courses:</i> "
+        + Rigorous.toFixed(2) + "%<i><br/>Percent Black/African American:</i> "
+        + AfricanAmerican.toFixed(2) + "%<i><br/>Percent Hispanic/Latino:</i> "
+        + Latino.toFixed(2) + "%");
+    } else { // caption when sized by total seniors in the school
+        return ("<strong>" + school + "</strong><br>Low income students had a graduation rate of " + FRPL.toFixed(d) + "%" +
+        "<br/> and there were "
+        + seniors + " total seniors (all incomes).<br/><br/><i>Percent of graduates that took AP/IB courses:</i> "
+        + Rigorous.toFixed(2) + "%<i><br/>Percent Black/African American:</i> "
+        + AfricanAmerican.toFixed(2) + "%<i><br/>Percent Hispanic/Latino:</i> "
+        + Latino.toFixed(2) + "%");
+    }
 }
 
 // resize the boxes displayed in the treemap
@@ -465,20 +511,13 @@ function reSize(type) {
 
     if (type == "PercentFRPL") {
         currSizing = "PercentFRPL";
-        document.getElementById("FRPLGradRate").checked = false;
         document.getElementById("PercentFRPL").checked = true;
         document.getElementById("Total").checked = false;
 
-    } else if (type == "Total") {
+    } else { //type == "Total"
         currSizing = "Total";
-        document.getElementById("FRPLGradRate").checked = false;
         document.getElementById("PercentFRPL").checked = false;
         document.getElementById("Total").checked = true;
-    } else {
-        currSizing = "FRPLGradRate";
-        document.getElementById("FRPLGradRate").checked = true;
-        document.getElementById("PercentFRPL").checked = false;
-        document.getElementById("Total").checked = false;
     }
 
     // filter the data and redraw the tree
@@ -495,13 +534,7 @@ function reSize(type) {
 function prepTree(data, type) {
     var root = stratify(data); // change the data to a hierarchical format
 
-    if (type == "FRPLGradRate") {
-        // size the nodes based on the grad rate of seniors on Free/Reduced Price Lunch
-        root
-            .sum(function(d) { return d.FRPLGradRate; })
-            .sort(function(a, b) { return b.height - a.height || b.FRPLGradRate - a.FRPLGradRate; })
-        ;
-    } else if (type == "PercentFRPL") {
+    if (type == "PercentFRPL") {
         // size the nodes based on the percentage of students in the school who are on Free/Reduced Price Lunch
         root
             .sum(function(d) { return d.FRPL; })
